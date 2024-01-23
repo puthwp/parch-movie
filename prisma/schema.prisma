@@ -8,11 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// datasource db {
-//   provider = "cockroachdb"
-//   url      = env("DATABASE_URL")
-// }
-
 model Movie {
   movieId     String  @id @default(cuid())
   title       String
@@ -85,8 +80,6 @@ model Profile {
   created         DateTime @default(now())
   updated         DateTime @updatedAt
   themeId         BigInt
-
-  @@map("UserPref")
 }
 
 model Theme {

@@ -1,6 +1,5 @@
-import { prisma } from '../../lib/prisma'
+import { prisma } from '../../../lib/prisma'
 export default async (req, res) => {
-    const { searchString } = req.query
     if (req.method !== 'GET') {
         return res.status(400)
                     .send({
@@ -10,17 +9,17 @@ export default async (req, res) => {
                     });
     }
     try {
-        const users = await prisma.category.findMany();
+        const genres = await prisma.genre.findMany();
         return res.status(200)
                     .send({
                         code: 200,
                         describe: 'ok',
-                        data: users
+                        data: genres
                     })
     } catch (e) {
         prisma.$disconnect()
     } finally {
         prisma.$disconnect()
-        process.exit(1)
+        // process.exit(1)
     }
 }

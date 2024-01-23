@@ -20,6 +20,6 @@ export default async (req, res) => {
         prisma.$disconnect()
     } finally {
         prisma.$disconnect()
-        process.exit(1)
+        // process.exit(1)
     }
 }

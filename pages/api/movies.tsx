@@ -1,6 +1,5 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../../lib/prisma'
 import Error from 'next/error'
-import { prisma } from '@/db/db'
 
 async function moviesList() {
     const moviesList = await prisma.movie.findMany({

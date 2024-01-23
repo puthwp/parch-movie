@@ -101,8 +101,7 @@ exports.Prisma.MovieScalarFieldEnum = makeEnum({
   available: 'available',
   infoId: 'infoId',
   created: 'created',
-  updated: 'updated',
-  profileId: 'profileId'
+  updated: 'updated'
 });
 
 exports.Prisma.MetaInfoScalarFieldEnum = makeEnum({
@@ -138,17 +137,19 @@ exports.Prisma.PosterScalarFieldEnum = makeEnum({
 exports.Prisma.UserScalarFieldEnum = makeEnum({
   id: 'id',
   userEmail: 'userEmail',
-  phoneNumber: 'phoneNumber',
-  profileID: 'profileID',
   created: 'created',
   updated: 'updated'
 });
 
 exports.Prisma.ProfileScalarFieldEnum = makeEnum({
   id: 'id',
+  phoneNumber: 'phoneNumber',
+  firstname: 'firstname',
+  lastname: 'lastname',
   created: 'created',
   updated: 'updated',
-  themeId: 'themeId'
+  themeId: 'themeId',
+  userId: 'userId'
 });
 
 exports.Prisma.ThemeScalarFieldEnum = makeEnum({

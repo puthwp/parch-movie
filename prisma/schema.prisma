@@ -8,11 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// datasource db {
-//   provider = "cockroachdb"
-//   url      = env("DATABASE_URL")
-// }
-
 model Movie {
   movieId     String  @id @default(cuid())
   title       String
@@ -26,10 +21,9 @@ model Movie {
   info      MetaInfo  @relation(fields: [infoId], references: [id])
   infoId    String    @unique
 
-  created   DateTime @default(now())
-  updated   DateTime @updatedAt
-  Profile   Profile? @relation(fields: [profileId], references: [id])
-  profileId String?
+  created DateTime  @default(now())
+  updated DateTime  @updatedAt
+  profile Profile[]
 }
 
 model MetaInfo {
@@ -69,24 +63,26 @@ model Poster {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  userEmail   String   @unique
-  phoneNumber String   @unique
-  profileID   String
-  created     DateTime @default(now())
-  updated     DateTime @updatedAt
+  id        String    @id @default(uuid())
+  userEmail String    @unique
+  created   DateTime  @default(now())
+  updated   DateTime  @updatedAt
+  profile   Profile[]
 }
 
 model Profile {
   id              String   @id @default(cuid())
+  phoneNumber     String   @unique
+  firstname       String
+  lastname        String
   lovedMovies     Movie[]
   lovedCategories Genre[]
   usrTheme        Theme    @relation(fields: [themeId], references: [id])
   created         DateTime @default(now())
   updated         DateTime @updatedAt
   themeId         BigInt
-
-  @@map("UserPref")
+  user            User     @relation(fields: [userId], references: [id])
+  userId          String
 }
 
 model Theme {
@@ -95,5 +91,5 @@ model Theme {
   themeColor String
   created    DateTime  @default(now())
   updated    DateTime  @updatedAt
-  UserPref   Profile[]
+  userPref   Profile[]
 }

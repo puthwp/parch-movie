@@ -26,7 +26,6 @@ export type Movie = {
   infoId: string
   created: Date
   updated: Date
-  profileId: string | null
 }
 
 /**
@@ -82,8 +81,6 @@ export type Poster = {
 export type User = {
   id: string
   userEmail: string
-  phoneNumber: string
-  profileID: string
   created: Date
   updated: Date
 }
@@ -94,9 +91,13 @@ export type User = {
  */
 export type Profile = {
   id: string
+  phoneNumber: string
+  firstname: string
+  lastname: string
   created: Date
   updated: Date
   themeId: bigint
+  userId: string
 }
 
 /**
@@ -978,11 +979,13 @@ export namespace Prisma {
   export type MovieCountOutputType = {
     genre: number
     tags: number
+    profile: number
   }
 
   export type MovieCountOutputTypeSelect = {
     genre?: boolean | MovieCountOutputTypeCountGenreArgs
     tags?: boolean | MovieCountOutputTypeCountTagsArgs
+    profile?: boolean | MovieCountOutputTypeCountProfileArgs
   }
 
   export type MovieCountOutputTypeGetPayload<
@@ -1033,6 +1036,14 @@ export namespace Prisma {
    */
   export type MovieCountOutputTypeCountTagsArgs = {
     where?: TagWhereInput
+  }
+
+
+  /**
+   * MovieCountOutputType without action
+   */
+  export type MovieCountOutputTypeCountProfileArgs = {
+    where?: ProfileWhereInput
   }
 
 
@@ -1219,6 +1230,63 @@ export namespace Prisma {
 
 
   /**
+   * Count Type UserCountOutputType
+   */
+
+
+  export type UserCountOutputType = {
+    profile: number
+  }
+
+  export type UserCountOutputTypeSelect = {
+    profile?: boolean | UserCountOutputTypeCountProfileArgs
+  }
+
+  export type UserCountOutputTypeGetPayload<
+    S extends boolean | null | undefined | UserCountOutputTypeArgs,
+    U = keyof S
+      > = S extends true
+        ? UserCountOutputType
+    : S extends undefined
+    ? never
+    : S extends UserCountOutputTypeArgs
+    ?'include' extends U
+    ? UserCountOutputType 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+    P extends keyof UserCountOutputType ? UserCountOutputType[P] : never
+  } 
+    : UserCountOutputType
+  : UserCountOutputType
+
+
+
+
+  // Custom InputTypes
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeArgs = {
+    /**
+     * Select specific fields to fetch from the UserCountOutputType
+     * 
+    **/
+    select?: UserCountOutputTypeSelect | null
+  }
+
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountProfileArgs = {
+    where?: ProfileWhereInput
+  }
+
+
+
+  /**
    * Count Type ProfileCountOutputType
    */
 
@@ -1291,11 +1359,11 @@ export namespace Prisma {
 
 
   export type ThemeCountOutputType = {
-    UserPref: number
+    userPref: number
   }
 
   export type ThemeCountOutputTypeSelect = {
-    UserPref?: boolean | ThemeCountOutputTypeCountUserPrefArgs
+    userPref?: boolean | ThemeCountOutputTypeCountUserPrefArgs
   }
 
   export type ThemeCountOutputTypeGetPayload<
@@ -1377,7 +1445,6 @@ export namespace Prisma {
     infoId: string | null
     created: Date | null
     updated: Date | null
-    profileId: string | null
   }
 
   export type MovieMaxAggregateOutputType = {
@@ -1390,7 +1457,6 @@ export namespace Prisma {
     infoId: string | null
     created: Date | null
     updated: Date | null
-    profileId: string | null
   }
 
   export type MovieCountAggregateOutputType = {
@@ -1403,7 +1469,6 @@ export namespace Prisma {
     infoId: number
     created: number
     updated: number
-    profileId: number
     _all: number
   }
 
@@ -1426,7 +1491,6 @@ export namespace Prisma {
     infoId?: true
     created?: true
     updated?: true
-    profileId?: true
   }
 
   export type MovieMaxAggregateInputType = {
@@ -1439,7 +1503,6 @@ export namespace Prisma {
     infoId?: true
     created?: true
     updated?: true
-    profileId?: true
   }
 
   export type MovieCountAggregateInputType = {
@@ -1452,7 +1515,6 @@ export namespace Prisma {
     infoId?: true
     created?: true
     updated?: true
-    profileId?: true
     _all?: true
   }
 
@@ -1558,7 +1620,6 @@ export namespace Prisma {
     infoId: string
     created: Date
     updated: Date
-    profileId: string | null
     _count: MovieCountAggregateOutputType | null
     _avg: MovieAvgAggregateOutputType | null
     _sum: MovieSumAggregateOutputType | null
@@ -1590,11 +1651,10 @@ export namespace Prisma {
     infoId?: boolean
     created?: boolean
     updated?: boolean
-    profileId?: boolean
     genre?: boolean | GenreFindManyArgs
     tags?: boolean | TagFindManyArgs
     info?: boolean | MetaInfoArgs
-    Profile?: boolean | ProfileArgs
+    profile?: boolean | ProfileFindManyArgs
     _count?: boolean | MovieCountOutputTypeArgs
   }
 
@@ -1602,7 +1662,7 @@ export namespace Prisma {
     genre?: boolean | GenreFindManyArgs
     tags?: boolean | TagFindManyArgs
     info?: boolean | MetaInfoArgs
-    Profile?: boolean | ProfileArgs
+    profile?: boolean | ProfileFindManyArgs
     _count?: boolean | MovieCountOutputTypeArgs
   }
 
@@ -1620,7 +1680,7 @@ export namespace Prisma {
         P extends 'genre' ? Array < GenreGetPayload<S['include'][P]>>  :
         P extends 'tags' ? Array < TagGetPayload<S['include'][P]>>  :
         P extends 'info' ? MetaInfoGetPayload<S['include'][P]> :
-        P extends 'Profile' ? ProfileGetPayload<S['include'][P]> | null :
+        P extends 'profile' ? Array < ProfileGetPayload<S['include'][P]>>  :
         P extends '_count' ? MovieCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : 'select' extends U
@@ -1629,7 +1689,7 @@ export namespace Prisma {
         P extends 'genre' ? Array < GenreGetPayload<S['select'][P]>>  :
         P extends 'tags' ? Array < TagGetPayload<S['select'][P]>>  :
         P extends 'info' ? MetaInfoGetPayload<S['select'][P]> :
-        P extends 'Profile' ? ProfileGetPayload<S['select'][P]> | null :
+        P extends 'profile' ? Array < ProfileGetPayload<S['select'][P]>>  :
         P extends '_count' ? MovieCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Movie ? Movie[P] : never
   } 
     : Movie
@@ -2011,7 +2071,7 @@ export namespace Prisma {
 
     info<T extends MetaInfoArgs = {}>(args?: Subset<T, MetaInfoArgs>): CheckSelect<T, Prisma__MetaInfoClient<MetaInfo | null >, Prisma__MetaInfoClient<MetaInfoGetPayload<T> | null >>;
 
-    Profile<T extends ProfileArgs = {}>(args?: Subset<T, ProfileArgs>): CheckSelect<T, Prisma__ProfileClient<Profile | null >, Prisma__ProfileClient<ProfileGetPayload<T> | null >>;
+    profile<T extends ProfileFindManyArgs = {}>(args?: Subset<T, ProfileFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Profile>>, PrismaPromise<Array<ProfileGetPayload<T>>>>;
 
     private get _document();
     /**
@@ -6089,8 +6149,6 @@ export namespace Prisma {
   export type UserMinAggregateOutputType = {
     id: string | null
     userEmail: string | null
-    phoneNumber: string | null
-    profileID: string | null
     created: Date | null
     updated: Date | null
   }
@@ -6098,8 +6156,6 @@ export namespace Prisma {
   export type UserMaxAggregateOutputType = {
     id: string | null
     userEmail: string | null
-    phoneNumber: string | null
-    profileID: string | null
     created: Date | null
     updated: Date | null
   }
@@ -6107,8 +6163,6 @@ export namespace Prisma {
   export type UserCountAggregateOutputType = {
     id: number
     userEmail: number
-    phoneNumber: number
-    profileID: number
     created: number
     updated: number
     _all: number
@@ -6118,8 +6172,6 @@ export namespace Prisma {
   export type UserMinAggregateInputType = {
     id?: true
     userEmail?: true
-    phoneNumber?: true
-    profileID?: true
     created?: true
     updated?: true
   }
@@ -6127,8 +6179,6 @@ export namespace Prisma {
   export type UserMaxAggregateInputType = {
     id?: true
     userEmail?: true
-    phoneNumber?: true
-    profileID?: true
     created?: true
     updated?: true
   }
@@ -6136,8 +6186,6 @@ export namespace Prisma {
   export type UserCountAggregateInputType = {
     id?: true
     userEmail?: true
-    phoneNumber?: true
-    profileID?: true
     created?: true
     updated?: true
     _all?: true
@@ -6224,8 +6272,6 @@ export namespace Prisma {
   export type UserGroupByOutputType = {
     id: string
     userEmail: string
-    phoneNumber: string
-    profileID: string
     created: Date
     updated: Date
     _count: UserCountAggregateOutputType | null
@@ -6250,10 +6296,15 @@ export namespace Prisma {
   export type UserSelect = {
     id?: boolean
     userEmail?: boolean
-    phoneNumber?: boolean
-    profileID?: boolean
     created?: boolean
     updated?: boolean
+    profile?: boolean | ProfileFindManyArgs
+    _count?: boolean | UserCountOutputTypeArgs
+  }
+
+  export type UserInclude = {
+    profile?: boolean | ProfileFindManyArgs
+    _count?: boolean | UserCountOutputTypeArgs
   }
 
   export type UserGetPayload<
@@ -6265,11 +6316,16 @@ export namespace Prisma {
     ? never
     : S extends UserArgs | UserFindManyArgs
     ?'include' extends U
-    ? User 
+    ? User  & {
+    [P in TrueKeys<S['include']>]:
+        P extends 'profile' ? Array < ProfileGetPayload<S['include'][P]>>  :
+        P extends '_count' ? UserCountOutputTypeGetPayload<S['include'][P]> :  never
+  } 
     : 'select' extends U
     ? {
     [P in TrueKeys<S['select']>]:
-    P extends keyof User ? User[P] : never
+        P extends 'profile' ? Array < ProfileGetPayload<S['select'][P]>>  :
+        P extends '_count' ? UserCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof User ? User[P] : never
   } 
     : User
   : User
@@ -6644,6 +6700,7 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
+    profile<T extends ProfileFindManyArgs = {}>(args?: Subset<T, ProfileFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Profile>>, PrismaPromise<Array<ProfileGetPayload<T>>>>;
 
     private get _document();
     /**
@@ -6682,6 +6739,11 @@ export namespace Prisma {
     **/
     select?: UserSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
+    /**
      * Filter, which User to fetch.
      * 
     **/
@@ -6709,6 +6771,11 @@ export namespace Prisma {
      * 
     **/
     select?: UserSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
     /**
      * Filter, which User to fetch.
      * 
@@ -6773,6 +6840,11 @@ export namespace Prisma {
     **/
     select?: UserSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
+    /**
      * Filter, which Users to fetch.
      * 
     **/
@@ -6819,6 +6891,11 @@ export namespace Prisma {
     **/
     select?: UserSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
+    /**
      * The data needed to create a User.
      * 
     **/
@@ -6848,6 +6925,11 @@ export namespace Prisma {
      * 
     **/
     select?: UserSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
     /**
      * The data needed to update a User.
      * 
@@ -6888,6 +6970,11 @@ export namespace Prisma {
     **/
     select?: UserSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
+    /**
      * The filter to search for the User to update in case it exists.
      * 
     **/
@@ -6914,6 +7001,11 @@ export namespace Prisma {
      * 
     **/
     select?: UserSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
     /**
      * Filter which User to delete.
      * 
@@ -6955,6 +7047,11 @@ export namespace Prisma {
      * 
     **/
     select?: UserSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
   }
 
 
@@ -6982,23 +7079,35 @@ export namespace Prisma {
 
   export type ProfileMinAggregateOutputType = {
     id: string | null
+    phoneNumber: string | null
+    firstname: string | null
+    lastname: string | null
     created: Date | null
     updated: Date | null
     themeId: bigint | null
+    userId: string | null
   }
 
   export type ProfileMaxAggregateOutputType = {
     id: string | null
+    phoneNumber: string | null
+    firstname: string | null
+    lastname: string | null
     created: Date | null
     updated: Date | null
     themeId: bigint | null
+    userId: string | null
   }
 
   export type ProfileCountAggregateOutputType = {
     id: number
+    phoneNumber: number
+    firstname: number
+    lastname: number
     created: number
     updated: number
     themeId: number
+    userId: number
     _all: number
   }
 
@@ -7013,23 +7122,35 @@ export namespace Prisma {
 
   export type ProfileMinAggregateInputType = {
     id?: true
+    phoneNumber?: true
+    firstname?: true
+    lastname?: true
     created?: true
     updated?: true
     themeId?: true
+    userId?: true
   }
 
   export type ProfileMaxAggregateInputType = {
     id?: true
+    phoneNumber?: true
+    firstname?: true
+    lastname?: true
     created?: true
     updated?: true
     themeId?: true
+    userId?: true
   }
 
   export type ProfileCountAggregateInputType = {
     id?: true
+    phoneNumber?: true
+    firstname?: true
+    lastname?: true
     created?: true
     updated?: true
     themeId?: true
+    userId?: true
     _all?: true
   }
 
@@ -7127,9 +7248,13 @@ export namespace Prisma {
 
   export type ProfileGroupByOutputType = {
     id: string
+    phoneNumber: string
+    firstname: string
+    lastname: string
     created: Date
     updated: Date
     themeId: bigint
+    userId: string
     _count: ProfileCountAggregateOutputType | null
     _avg: ProfileAvgAggregateOutputType | null
     _sum: ProfileSumAggregateOutputType | null
@@ -7153,12 +7278,17 @@ export namespace Prisma {
 
   export type ProfileSelect = {
     id?: boolean
+    phoneNumber?: boolean
+    firstname?: boolean
+    lastname?: boolean
     created?: boolean
     updated?: boolean
     themeId?: boolean
+    userId?: boolean
     lovedMovies?: boolean | MovieFindManyArgs
     lovedCategories?: boolean | GenreFindManyArgs
     usrTheme?: boolean | ThemeArgs
+    user?: boolean | UserArgs
     _count?: boolean | ProfileCountOutputTypeArgs
   }
 
@@ -7166,6 +7296,7 @@ export namespace Prisma {
     lovedMovies?: boolean | MovieFindManyArgs
     lovedCategories?: boolean | GenreFindManyArgs
     usrTheme?: boolean | ThemeArgs
+    user?: boolean | UserArgs
     _count?: boolean | ProfileCountOutputTypeArgs
   }
 
@@ -7183,6 +7314,7 @@ export namespace Prisma {
         P extends 'lovedMovies' ? Array < MovieGetPayload<S['include'][P]>>  :
         P extends 'lovedCategories' ? Array < GenreGetPayload<S['include'][P]>>  :
         P extends 'usrTheme' ? ThemeGetPayload<S['include'][P]> :
+        P extends 'user' ? UserGetPayload<S['include'][P]> :
         P extends '_count' ? ProfileCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : 'select' extends U
@@ -7191,6 +7323,7 @@ export namespace Prisma {
         P extends 'lovedMovies' ? Array < MovieGetPayload<S['select'][P]>>  :
         P extends 'lovedCategories' ? Array < GenreGetPayload<S['select'][P]>>  :
         P extends 'usrTheme' ? ThemeGetPayload<S['select'][P]> :
+        P extends 'user' ? UserGetPayload<S['select'][P]> :
         P extends '_count' ? ProfileCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Profile ? Profile[P] : never
   } 
     : Profile
@@ -7571,6 +7704,8 @@ export namespace Prisma {
     lovedCategories<T extends GenreFindManyArgs = {}>(args?: Subset<T, GenreFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Genre>>, PrismaPromise<Array<GenreGetPayload<T>>>>;
 
     usrTheme<T extends ThemeArgs = {}>(args?: Subset<T, ThemeArgs>): CheckSelect<T, Prisma__ThemeClient<Theme | null >, Prisma__ThemeClient<ThemeGetPayload<T> | null >>;
+
+    user<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | null >, Prisma__UserClient<UserGetPayload<T> | null >>;
 
     private get _document();
     /**
@@ -8131,12 +8266,12 @@ export namespace Prisma {
     themeColor?: boolean
     created?: boolean
     updated?: boolean
-    UserPref?: boolean | ProfileFindManyArgs
+    userPref?: boolean | ProfileFindManyArgs
     _count?: boolean | ThemeCountOutputTypeArgs
   }
 
   export type ThemeInclude = {
-    UserPref?: boolean | ProfileFindManyArgs
+    userPref?: boolean | ProfileFindManyArgs
     _count?: boolean | ThemeCountOutputTypeArgs
   }
 
@@ -8151,13 +8286,13 @@ export namespace Prisma {
     ?'include' extends U
     ? Theme  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'UserPref' ? Array < ProfileGetPayload<S['include'][P]>>  :
+        P extends 'userPref' ? Array < ProfileGetPayload<S['include'][P]>>  :
         P extends '_count' ? ThemeCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : 'select' extends U
     ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'UserPref' ? Array < ProfileGetPayload<S['select'][P]>>  :
+        P extends 'userPref' ? Array < ProfileGetPayload<S['select'][P]>>  :
         P extends '_count' ? ThemeCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Theme ? Theme[P] : never
   } 
     : Theme
@@ -8533,7 +8668,7 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    UserPref<T extends ProfileFindManyArgs = {}>(args?: Subset<T, ProfileFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Profile>>, PrismaPromise<Array<ProfileGetPayload<T>>>>;
+    userPref<T extends ProfileFindManyArgs = {}>(args?: Subset<T, ProfileFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Profile>>, PrismaPromise<Array<ProfileGetPayload<T>>>>;
 
     private get _document();
     /**
@@ -8912,8 +9047,7 @@ export namespace Prisma {
     available: 'available',
     infoId: 'infoId',
     created: 'created',
-    updated: 'updated',
-    profileId: 'profileId'
+    updated: 'updated'
   };
 
   export type MovieScalarFieldEnum = (typeof MovieScalarFieldEnum)[keyof typeof MovieScalarFieldEnum]
@@ -8964,8 +9098,6 @@ export namespace Prisma {
   export const UserScalarFieldEnum: {
     id: 'id',
     userEmail: 'userEmail',
-    phoneNumber: 'phoneNumber',
-    profileID: 'profileID',
     created: 'created',
     updated: 'updated'
   };
@@ -8975,9 +9107,13 @@ export namespace Prisma {
 
   export const ProfileScalarFieldEnum: {
     id: 'id',
+    phoneNumber: 'phoneNumber',
+    firstname: 'firstname',
+    lastname: 'lastname',
     created: 'created',
     updated: 'updated',
-    themeId: 'themeId'
+    themeId: 'themeId',
+    userId: 'userId'
   };
 
   export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
@@ -9109,11 +9245,10 @@ export namespace Prisma {
     infoId?: StringFilter<"Movie"> | string
     created?: DateTimeFilter<"Movie"> | Date | string
     updated?: DateTimeFilter<"Movie"> | Date | string
-    profileId?: StringNullableFilter<"Movie"> | string | null
     genre?: GenreListRelationFilter
     tags?: TagListRelationFilter
     info?: XOR<MetaInfoRelationFilter, MetaInfoWhereInput>
-    Profile?: XOR<ProfileNullableRelationFilter, ProfileWhereInput> | null
+    profile?: ProfileListRelationFilter
   }
 
   export type MovieOrderByWithRelationInput = {
@@ -9126,11 +9261,10 @@ export namespace Prisma {
     infoId?: SortOrder
     created?: SortOrder
     updated?: SortOrder
-    profileId?: SortOrderInput | SortOrder
     genre?: GenreOrderByRelationAggregateInput
     tags?: TagOrderByRelationAggregateInput
     info?: MetaInfoOrderByWithRelationInput
-    Profile?: ProfileOrderByWithRelationInput
+    profile?: ProfileOrderByRelationAggregateInput
   }
 
   export type MovieWhereUniqueInput = {
@@ -9146,11 +9280,10 @@ export namespace Prisma {
     available?: DateTimeNullableFilter<"Movie"> | Date | string | null
     created?: DateTimeFilter<"Movie"> | Date | string
     updated?: DateTimeFilter<"Movie"> | Date | string
-    profileId?: StringNullableFilter<"Movie"> | string | null
     genre?: GenreListRelationFilter
     tags?: TagListRelationFilter
     info?: XOR<MetaInfoRelationFilter, MetaInfoWhereInput>
-    Profile?: XOR<ProfileNullableRelationFilter, ProfileWhereInput> | null
+    profile?: ProfileListRelationFilter
   }
 
   export type MovieOrderByWithAggregationInput = {
@@ -9163,7 +9296,6 @@ export namespace Prisma {
     infoId?: SortOrder
     created?: SortOrder
     updated?: SortOrder
-    profileId?: SortOrderInput | SortOrder
     _count?: MovieCountOrderByAggregateInput
     _avg?: MovieAvgOrderByAggregateInput
     _max?: MovieMaxOrderByAggregateInput
@@ -9184,7 +9316,6 @@ export namespace Prisma {
     infoId?: StringWithAggregatesFilter<"Movie"> | string
     created?: DateTimeWithAggregatesFilter<"Movie"> | Date | string
     updated?: DateTimeWithAggregatesFilter<"Movie"> | Date | string
-    profileId?: StringNullableWithAggregatesFilter<"Movie"> | string | null
   }
 
   export type MetaInfoWhereInput = {
@@ -9409,38 +9540,33 @@ export namespace Prisma {
     NOT?: Enumerable<UserWhereInput>
     id?: StringFilter<"User"> | string
     userEmail?: StringFilter<"User"> | string
-    phoneNumber?: StringFilter<"User"> | string
-    profileID?: StringFilter<"User"> | string
     created?: DateTimeFilter<"User"> | Date | string
     updated?: DateTimeFilter<"User"> | Date | string
+    profile?: ProfileListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
     userEmail?: SortOrder
-    phoneNumber?: SortOrder
-    profileID?: SortOrder
     created?: SortOrder
     updated?: SortOrder
+    profile?: ProfileOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = {
     id?: string
     userEmail?: string
-    phoneNumber?: string
     AND?: Enumerable<UserWhereInput>
     OR?: Enumerable<UserWhereInput>
     NOT?: Enumerable<UserWhereInput>
-    profileID?: StringFilter<"User"> | string
     created?: DateTimeFilter<"User"> | Date | string
     updated?: DateTimeFilter<"User"> | Date | string
+    profile?: ProfileListRelationFilter
   }
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
     userEmail?: SortOrder
-    phoneNumber?: SortOrder
-    profileID?: SortOrder
     created?: SortOrder
     updated?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -9454,8 +9580,6 @@ export namespace Prisma {
     NOT?: Enumerable<UserScalarWhereWithAggregatesInput>
     id?: StringWithAggregatesFilter<"User"> | string
     userEmail?: StringWithAggregatesFilter<"User"> | string
-    phoneNumber?: StringWithAggregatesFilter<"User"> | string
-    profileID?: StringWithAggregatesFilter<"User"> | string
     created?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updated?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -9465,42 +9589,61 @@ export namespace Prisma {
     OR?: Enumerable<ProfileWhereInput>
     NOT?: Enumerable<ProfileWhereInput>
     id?: StringFilter<"Profile"> | string
+    phoneNumber?: StringFilter<"Profile"> | string
+    firstname?: StringFilter<"Profile"> | string
+    lastname?: StringFilter<"Profile"> | string
     created?: DateTimeFilter<"Profile"> | Date | string
     updated?: DateTimeFilter<"Profile"> | Date | string
     themeId?: BigIntFilter<"Profile"> | bigint | number
+    userId?: StringFilter<"Profile"> | string
     lovedMovies?: MovieListRelationFilter
     lovedCategories?: GenreListRelationFilter
     usrTheme?: XOR<ThemeRelationFilter, ThemeWhereInput>
+    user?: XOR<UserRelationFilter, UserWhereInput>
   }
 
   export type ProfileOrderByWithRelationInput = {
     id?: SortOrder
+    phoneNumber?: SortOrder
+    firstname?: SortOrder
+    lastname?: SortOrder
     created?: SortOrder
     updated?: SortOrder
     themeId?: SortOrder
+    userId?: SortOrder
     lovedMovies?: MovieOrderByRelationAggregateInput
     lovedCategories?: GenreOrderByRelationAggregateInput
     usrTheme?: ThemeOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type ProfileWhereUniqueInput = {
     id?: string
+    phoneNumber?: string
     AND?: Enumerable<ProfileWhereInput>
     OR?: Enumerable<ProfileWhereInput>
     NOT?: Enumerable<ProfileWhereInput>
+    firstname?: StringFilter<"Profile"> | string
+    lastname?: StringFilter<"Profile"> | string
     created?: DateTimeFilter<"Profile"> | Date | string
     updated?: DateTimeFilter<"Profile"> | Date | string
     themeId?: BigIntFilter<"Profile"> | bigint | number
+    userId?: StringFilter<"Profile"> | string
     lovedMovies?: MovieListRelationFilter
     lovedCategories?: GenreListRelationFilter
     usrTheme?: XOR<ThemeRelationFilter, ThemeWhereInput>
+    user?: XOR<UserRelationFilter, UserWhereInput>
   }
 
   export type ProfileOrderByWithAggregationInput = {
     id?: SortOrder
+    phoneNumber?: SortOrder
+    firstname?: SortOrder
+    lastname?: SortOrder
     created?: SortOrder
     updated?: SortOrder
     themeId?: SortOrder
+    userId?: SortOrder
     _count?: ProfileCountOrderByAggregateInput
     _avg?: ProfileAvgOrderByAggregateInput
     _max?: ProfileMaxOrderByAggregateInput
@@ -9513,9 +9656,13 @@ export namespace Prisma {
     OR?: Enumerable<ProfileScalarWhereWithAggregatesInput>
     NOT?: Enumerable<ProfileScalarWhereWithAggregatesInput>
     id?: StringWithAggregatesFilter<"Profile"> | string
+    phoneNumber?: StringWithAggregatesFilter<"Profile"> | string
+    firstname?: StringWithAggregatesFilter<"Profile"> | string
+    lastname?: StringWithAggregatesFilter<"Profile"> | string
     created?: DateTimeWithAggregatesFilter<"Profile"> | Date | string
     updated?: DateTimeWithAggregatesFilter<"Profile"> | Date | string
     themeId?: BigIntWithAggregatesFilter<"Profile"> | bigint | number
+    userId?: StringWithAggregatesFilter<"Profile"> | string
   }
 
   export type ThemeWhereInput = {
@@ -9527,7 +9674,7 @@ export namespace Prisma {
     themeColor?: StringFilter<"Theme"> | string
     created?: DateTimeFilter<"Theme"> | Date | string
     updated?: DateTimeFilter<"Theme"> | Date | string
-    UserPref?: ProfileListRelationFilter
+    userPref?: ProfileListRelationFilter
   }
 
   export type ThemeOrderByWithRelationInput = {
@@ -9536,7 +9683,7 @@ export namespace Prisma {
     themeColor?: SortOrder
     created?: SortOrder
     updated?: SortOrder
-    UserPref?: ProfileOrderByRelationAggregateInput
+    userPref?: ProfileOrderByRelationAggregateInput
   }
 
   export type ThemeWhereUniqueInput = {
@@ -9548,7 +9695,7 @@ export namespace Prisma {
     themeColor?: StringFilter<"Theme"> | string
     created?: DateTimeFilter<"Theme"> | Date | string
     updated?: DateTimeFilter<"Theme"> | Date | string
-    UserPref?: ProfileListRelationFilter
+    userPref?: ProfileListRelationFilter
   }
 
   export type ThemeOrderByWithAggregationInput = {
@@ -9587,7 +9734,7 @@ export namespace Prisma {
     genre?: GenreCreateNestedManyWithoutMoviesInput
     tags?: TagCreateNestedManyWithoutMoviesInput
     info: MetaInfoCreateNestedOneWithoutMovieInput
-    Profile?: ProfileCreateNestedOneWithoutLovedMoviesInput
+    profile?: ProfileCreateNestedManyWithoutLovedMoviesInput
   }
 
   export type MovieUncheckedCreateInput = {
@@ -9600,9 +9747,9 @@ export namespace Prisma {
     infoId: string
     created?: Date | string
     updated?: Date | string
-    profileId?: string | null
     genre?: GenreUncheckedCreateNestedManyWithoutMoviesInput
     tags?: TagUncheckedCreateNestedManyWithoutMoviesInput
+    profile?: ProfileUncheckedCreateNestedManyWithoutLovedMoviesInput
   }
 
   export type MovieUpdateInput = {
@@ -9617,7 +9764,7 @@ export namespace Prisma {
     genre?: GenreUpdateManyWithoutMoviesNestedInput
     tags?: TagUpdateManyWithoutMoviesNestedInput
     info?: MetaInfoUpdateOneRequiredWithoutMovieNestedInput
-    Profile?: ProfileUpdateOneWithoutLovedMoviesNestedInput
+    profile?: ProfileUpdateManyWithoutLovedMoviesNestedInput
   }
 
   export type MovieUncheckedUpdateInput = {
@@ -9630,9 +9777,9 @@ export namespace Prisma {
     infoId?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    profileId?: NullableStringFieldUpdateOperationsInput | string | null
     genre?: GenreUncheckedUpdateManyWithoutMoviesNestedInput
     tags?: TagUncheckedUpdateManyWithoutMoviesNestedInput
+    profile?: ProfileUncheckedUpdateManyWithoutLovedMoviesNestedInput
   }
 
   export type MovieCreateManyInput = {
@@ -9645,7 +9792,6 @@ export namespace Prisma {
     infoId: string
     created?: Date | string
     updated?: Date | string
-    profileId?: string | null
   }
 
   export type MovieUpdateManyMutationInput = {
@@ -9669,7 +9815,6 @@ export namespace Prisma {
     infoId?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    profileId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MetaInfoCreateInput = {
@@ -9904,44 +10049,38 @@ export namespace Prisma {
   export type UserCreateInput = {
     id?: string
     userEmail: string
-    phoneNumber: string
-    profileID: string
     created?: Date | string
     updated?: Date | string
+    profile?: ProfileCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
     id?: string
     userEmail: string
-    phoneNumber: string
-    profileID: string
     created?: Date | string
     updated?: Date | string
+    profile?: ProfileUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     userEmail?: StringFieldUpdateOperationsInput | string
-    phoneNumber?: StringFieldUpdateOperationsInput | string
-    profileID?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    profile?: ProfileUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     userEmail?: StringFieldUpdateOperationsInput | string
-    phoneNumber?: StringFieldUpdateOperationsInput | string
-    profileID?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    profile?: ProfileUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
     id?: string
     userEmail: string
-    phoneNumber: string
-    profileID: string
     created?: Date | string
     updated?: Date | string
   }
@@ -9949,8 +10088,6 @@ export namespace Prisma {
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     userEmail?: StringFieldUpdateOperationsInput | string
-    phoneNumber?: StringFieldUpdateOperationsInput | string
-    profileID?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9958,66 +10095,91 @@ export namespace Prisma {
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     userEmail?: StringFieldUpdateOperationsInput | string
-    phoneNumber?: StringFieldUpdateOperationsInput | string
-    profileID?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ProfileCreateInput = {
     id?: string
+    phoneNumber: string
+    firstname: string
+    lastname: string
     created?: Date | string
     updated?: Date | string
     lovedMovies?: MovieCreateNestedManyWithoutProfileInput
     lovedCategories?: GenreCreateNestedManyWithoutProfileInput
     usrTheme: ThemeCreateNestedOneWithoutUserPrefInput
+    user: UserCreateNestedOneWithoutProfileInput
   }
 
   export type ProfileUncheckedCreateInput = {
     id?: string
+    phoneNumber: string
+    firstname: string
+    lastname: string
     created?: Date | string
     updated?: Date | string
     themeId: bigint | number
+    userId: string
     lovedMovies?: MovieUncheckedCreateNestedManyWithoutProfileInput
     lovedCategories?: GenreUncheckedCreateNestedManyWithoutProfileInput
   }
 
   export type ProfileUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     lovedMovies?: MovieUpdateManyWithoutProfileNestedInput
     lovedCategories?: GenreUpdateManyWithoutProfileNestedInput
     usrTheme?: ThemeUpdateOneRequiredWithoutUserPrefNestedInput
+    user?: UserUpdateOneRequiredWithoutProfileNestedInput
   }
 
   export type ProfileUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     themeId?: BigIntFieldUpdateOperationsInput | bigint | number
+    userId?: StringFieldUpdateOperationsInput | string
     lovedMovies?: MovieUncheckedUpdateManyWithoutProfileNestedInput
     lovedCategories?: GenreUncheckedUpdateManyWithoutProfileNestedInput
   }
 
   export type ProfileCreateManyInput = {
     id?: string
+    phoneNumber: string
+    firstname: string
+    lastname: string
     created?: Date | string
     updated?: Date | string
     themeId: bigint | number
+    userId: string
   }
 
   export type ProfileUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ProfileUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     themeId?: BigIntFieldUpdateOperationsInput | bigint | number
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ThemeCreateInput = {
@@ -10026,7 +10188,7 @@ export namespace Prisma {
     themeColor: string
     created?: Date | string
     updated?: Date | string
-    UserPref?: ProfileCreateNestedManyWithoutUsrThemeInput
+    userPref?: ProfileCreateNestedManyWithoutUsrThemeInput
   }
 
   export type ThemeUncheckedCreateInput = {
@@ -10035,7 +10197,7 @@ export namespace Prisma {
     themeColor: string
     created?: Date | string
     updated?: Date | string
-    UserPref?: ProfileUncheckedCreateNestedManyWithoutUsrThemeInput
+    userPref?: ProfileUncheckedCreateNestedManyWithoutUsrThemeInput
   }
 
   export type ThemeUpdateInput = {
@@ -10044,7 +10206,7 @@ export namespace Prisma {
     themeColor?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    UserPref?: ProfileUpdateManyWithoutUsrThemeNestedInput
+    userPref?: ProfileUpdateManyWithoutUsrThemeNestedInput
   }
 
   export type ThemeUncheckedUpdateInput = {
@@ -10053,7 +10215,7 @@ export namespace Prisma {
     themeColor?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    UserPref?: ProfileUncheckedUpdateManyWithoutUsrThemeNestedInput
+    userPref?: ProfileUncheckedUpdateManyWithoutUsrThemeNestedInput
   }
 
   export type ThemeCreateManyInput = {
@@ -10160,9 +10322,10 @@ export namespace Prisma {
     isNot?: MetaInfoWhereInput
   }
 
-  export type ProfileNullableRelationFilter = {
-    is?: ProfileWhereInput | null
-    isNot?: ProfileWhereInput | null
+  export type ProfileListRelationFilter = {
+    every?: ProfileWhereInput
+    some?: ProfileWhereInput
+    none?: ProfileWhereInput
   }
 
   export type SortOrderInput = {
@@ -10178,6 +10341,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type ProfileOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type MovieCountOrderByAggregateInput = {
     movieId?: SortOrder
     title?: SortOrder
@@ -10188,7 +10355,6 @@ export namespace Prisma {
     infoId?: SortOrder
     created?: SortOrder
     updated?: SortOrder
-    profileId?: SortOrder
   }
 
   export type MovieAvgOrderByAggregateInput = {
@@ -10205,7 +10371,6 @@ export namespace Prisma {
     infoId?: SortOrder
     created?: SortOrder
     updated?: SortOrder
-    profileId?: SortOrder
   }
 
   export type MovieMinOrderByAggregateInput = {
@@ -10218,7 +10383,6 @@ export namespace Prisma {
     infoId?: SortOrder
     created?: SortOrder
     updated?: SortOrder
-    profileId?: SortOrder
   }
 
   export type MovieSumOrderByAggregateInput = {
@@ -10353,17 +10517,7 @@ export namespace Prisma {
     none?: MovieWhereInput
   }
 
-  export type ProfileListRelationFilter = {
-    every?: ProfileWhereInput
-    some?: ProfileWhereInput
-    none?: ProfileWhereInput
-  }
-
   export type MovieOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type ProfileOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -10438,8 +10592,6 @@ export namespace Prisma {
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     userEmail?: SortOrder
-    phoneNumber?: SortOrder
-    profileID?: SortOrder
     created?: SortOrder
     updated?: SortOrder
   }
@@ -10447,8 +10599,6 @@ export namespace Prisma {
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
     userEmail?: SortOrder
-    phoneNumber?: SortOrder
-    profileID?: SortOrder
     created?: SortOrder
     updated?: SortOrder
   }
@@ -10456,8 +10606,6 @@ export namespace Prisma {
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
     userEmail?: SortOrder
-    phoneNumber?: SortOrder
-    profileID?: SortOrder
     created?: SortOrder
     updated?: SortOrder
   }
@@ -10478,11 +10626,20 @@ export namespace Prisma {
     isNot?: ThemeWhereInput
   }
 
+  export type UserRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
   export type ProfileCountOrderByAggregateInput = {
     id?: SortOrder
+    phoneNumber?: SortOrder
+    firstname?: SortOrder
+    lastname?: SortOrder
     created?: SortOrder
     updated?: SortOrder
     themeId?: SortOrder
+    userId?: SortOrder
   }
 
   export type ProfileAvgOrderByAggregateInput = {
@@ -10491,16 +10648,24 @@ export namespace Prisma {
 
   export type ProfileMaxOrderByAggregateInput = {
     id?: SortOrder
+    phoneNumber?: SortOrder
+    firstname?: SortOrder
+    lastname?: SortOrder
     created?: SortOrder
     updated?: SortOrder
     themeId?: SortOrder
+    userId?: SortOrder
   }
 
   export type ProfileMinOrderByAggregateInput = {
     id?: SortOrder
+    phoneNumber?: SortOrder
+    firstname?: SortOrder
+    lastname?: SortOrder
     created?: SortOrder
     updated?: SortOrder
     themeId?: SortOrder
+    userId?: SortOrder
   }
 
   export type ProfileSumOrderByAggregateInput = {
@@ -10573,10 +10738,10 @@ export namespace Prisma {
     connect?: MetaInfoWhereUniqueInput
   }
 
-  export type ProfileCreateNestedOneWithoutLovedMoviesInput = {
-    create?: XOR<ProfileCreateWithoutLovedMoviesInput, ProfileUncheckedCreateWithoutLovedMoviesInput>
-    connectOrCreate?: ProfileCreateOrConnectWithoutLovedMoviesInput
-    connect?: ProfileWhereUniqueInput
+  export type ProfileCreateNestedManyWithoutLovedMoviesInput = {
+    create?: XOR<Enumerable<ProfileCreateWithoutLovedMoviesInput>, Enumerable<ProfileUncheckedCreateWithoutLovedMoviesInput>>
+    connectOrCreate?: Enumerable<ProfileCreateOrConnectWithoutLovedMoviesInput>
+    connect?: Enumerable<ProfileWhereUniqueInput>
   }
 
   export type GenreUncheckedCreateNestedManyWithoutMoviesInput = {
@@ -10589,6 +10754,12 @@ export namespace Prisma {
     create?: XOR<Enumerable<TagCreateWithoutMoviesInput>, Enumerable<TagUncheckedCreateWithoutMoviesInput>>
     connectOrCreate?: Enumerable<TagCreateOrConnectWithoutMoviesInput>
     connect?: Enumerable<TagWhereUniqueInput>
+  }
+
+  export type ProfileUncheckedCreateNestedManyWithoutLovedMoviesInput = {
+    create?: XOR<Enumerable<ProfileCreateWithoutLovedMoviesInput>, Enumerable<ProfileUncheckedCreateWithoutLovedMoviesInput>>
+    connectOrCreate?: Enumerable<ProfileCreateOrConnectWithoutLovedMoviesInput>
+    connect?: Enumerable<ProfileWhereUniqueInput>
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -10649,14 +10820,17 @@ export namespace Prisma {
     update?: XOR<XOR<MetaInfoUpdateToOneWithWhereWithoutMovieInput, MetaInfoUpdateWithoutMovieInput>, MetaInfoUncheckedUpdateWithoutMovieInput>
   }
 
-  export type ProfileUpdateOneWithoutLovedMoviesNestedInput = {
-    create?: XOR<ProfileCreateWithoutLovedMoviesInput, ProfileUncheckedCreateWithoutLovedMoviesInput>
-    connectOrCreate?: ProfileCreateOrConnectWithoutLovedMoviesInput
-    upsert?: ProfileUpsertWithoutLovedMoviesInput
-    disconnect?: ProfileWhereInput | boolean
-    delete?: ProfileWhereInput | boolean
-    connect?: ProfileWhereUniqueInput
-    update?: XOR<XOR<ProfileUpdateToOneWithWhereWithoutLovedMoviesInput, ProfileUpdateWithoutLovedMoviesInput>, ProfileUncheckedUpdateWithoutLovedMoviesInput>
+  export type ProfileUpdateManyWithoutLovedMoviesNestedInput = {
+    create?: XOR<Enumerable<ProfileCreateWithoutLovedMoviesInput>, Enumerable<ProfileUncheckedCreateWithoutLovedMoviesInput>>
+    connectOrCreate?: Enumerable<ProfileCreateOrConnectWithoutLovedMoviesInput>
+    upsert?: Enumerable<ProfileUpsertWithWhereUniqueWithoutLovedMoviesInput>
+    set?: Enumerable<ProfileWhereUniqueInput>
+    disconnect?: Enumerable<ProfileWhereUniqueInput>
+    delete?: Enumerable<ProfileWhereUniqueInput>
+    connect?: Enumerable<ProfileWhereUniqueInput>
+    update?: Enumerable<ProfileUpdateWithWhereUniqueWithoutLovedMoviesInput>
+    updateMany?: Enumerable<ProfileUpdateManyWithWhereWithoutLovedMoviesInput>
+    deleteMany?: Enumerable<ProfileScalarWhereInput>
   }
 
   export type GenreUncheckedUpdateManyWithoutMoviesNestedInput = {
@@ -10683,6 +10857,19 @@ export namespace Prisma {
     update?: Enumerable<TagUpdateWithWhereUniqueWithoutMoviesInput>
     updateMany?: Enumerable<TagUpdateManyWithWhereWithoutMoviesInput>
     deleteMany?: Enumerable<TagScalarWhereInput>
+  }
+
+  export type ProfileUncheckedUpdateManyWithoutLovedMoviesNestedInput = {
+    create?: XOR<Enumerable<ProfileCreateWithoutLovedMoviesInput>, Enumerable<ProfileUncheckedCreateWithoutLovedMoviesInput>>
+    connectOrCreate?: Enumerable<ProfileCreateOrConnectWithoutLovedMoviesInput>
+    upsert?: Enumerable<ProfileUpsertWithWhereUniqueWithoutLovedMoviesInput>
+    set?: Enumerable<ProfileWhereUniqueInput>
+    disconnect?: Enumerable<ProfileWhereUniqueInput>
+    delete?: Enumerable<ProfileWhereUniqueInput>
+    connect?: Enumerable<ProfileWhereUniqueInput>
+    update?: Enumerable<ProfileUpdateWithWhereUniqueWithoutLovedMoviesInput>
+    updateMany?: Enumerable<ProfileUpdateManyWithWhereWithoutLovedMoviesInput>
+    deleteMany?: Enumerable<ProfileScalarWhereInput>
   }
 
   export type PosterCreateNestedManyWithoutMetaInfoInput = {
@@ -10889,10 +11076,51 @@ export namespace Prisma {
     update?: XOR<XOR<MetaInfoUpdateToOneWithWhereWithoutPosterInput, MetaInfoUpdateWithoutPosterInput>, MetaInfoUncheckedUpdateWithoutPosterInput>
   }
 
+  export type ProfileCreateNestedManyWithoutUserInput = {
+    create?: XOR<Enumerable<ProfileCreateWithoutUserInput>, Enumerable<ProfileUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<ProfileCreateOrConnectWithoutUserInput>
+    createMany?: ProfileCreateManyUserInputEnvelope
+    connect?: Enumerable<ProfileWhereUniqueInput>
+  }
+
+  export type ProfileUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<Enumerable<ProfileCreateWithoutUserInput>, Enumerable<ProfileUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<ProfileCreateOrConnectWithoutUserInput>
+    createMany?: ProfileCreateManyUserInputEnvelope
+    connect?: Enumerable<ProfileWhereUniqueInput>
+  }
+
+  export type ProfileUpdateManyWithoutUserNestedInput = {
+    create?: XOR<Enumerable<ProfileCreateWithoutUserInput>, Enumerable<ProfileUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<ProfileCreateOrConnectWithoutUserInput>
+    upsert?: Enumerable<ProfileUpsertWithWhereUniqueWithoutUserInput>
+    createMany?: ProfileCreateManyUserInputEnvelope
+    set?: Enumerable<ProfileWhereUniqueInput>
+    disconnect?: Enumerable<ProfileWhereUniqueInput>
+    delete?: Enumerable<ProfileWhereUniqueInput>
+    connect?: Enumerable<ProfileWhereUniqueInput>
+    update?: Enumerable<ProfileUpdateWithWhereUniqueWithoutUserInput>
+    updateMany?: Enumerable<ProfileUpdateManyWithWhereWithoutUserInput>
+    deleteMany?: Enumerable<ProfileScalarWhereInput>
+  }
+
+  export type ProfileUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<Enumerable<ProfileCreateWithoutUserInput>, Enumerable<ProfileUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<ProfileCreateOrConnectWithoutUserInput>
+    upsert?: Enumerable<ProfileUpsertWithWhereUniqueWithoutUserInput>
+    createMany?: ProfileCreateManyUserInputEnvelope
+    set?: Enumerable<ProfileWhereUniqueInput>
+    disconnect?: Enumerable<ProfileWhereUniqueInput>
+    delete?: Enumerable<ProfileWhereUniqueInput>
+    connect?: Enumerable<ProfileWhereUniqueInput>
+    update?: Enumerable<ProfileUpdateWithWhereUniqueWithoutUserInput>
+    updateMany?: Enumerable<ProfileUpdateManyWithWhereWithoutUserInput>
+    deleteMany?: Enumerable<ProfileScalarWhereInput>
+  }
+
   export type MovieCreateNestedManyWithoutProfileInput = {
     create?: XOR<Enumerable<MovieCreateWithoutProfileInput>, Enumerable<MovieUncheckedCreateWithoutProfileInput>>
     connectOrCreate?: Enumerable<MovieCreateOrConnectWithoutProfileInput>
-    createMany?: MovieCreateManyProfileInputEnvelope
     connect?: Enumerable<MovieWhereUniqueInput>
   }
 
@@ -10908,10 +11136,15 @@ export namespace Prisma {
     connect?: ThemeWhereUniqueInput
   }
 
+  export type UserCreateNestedOneWithoutProfileInput = {
+    create?: XOR<UserCreateWithoutProfileInput, UserUncheckedCreateWithoutProfileInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProfileInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type MovieUncheckedCreateNestedManyWithoutProfileInput = {
     create?: XOR<Enumerable<MovieCreateWithoutProfileInput>, Enumerable<MovieUncheckedCreateWithoutProfileInput>>
     connectOrCreate?: Enumerable<MovieCreateOrConnectWithoutProfileInput>
-    createMany?: MovieCreateManyProfileInputEnvelope
     connect?: Enumerable<MovieWhereUniqueInput>
   }
 
@@ -10925,7 +11158,6 @@ export namespace Prisma {
     create?: XOR<Enumerable<MovieCreateWithoutProfileInput>, Enumerable<MovieUncheckedCreateWithoutProfileInput>>
     connectOrCreate?: Enumerable<MovieCreateOrConnectWithoutProfileInput>
     upsert?: Enumerable<MovieUpsertWithWhereUniqueWithoutProfileInput>
-    createMany?: MovieCreateManyProfileInputEnvelope
     set?: Enumerable<MovieWhereUniqueInput>
     disconnect?: Enumerable<MovieWhereUniqueInput>
     delete?: Enumerable<MovieWhereUniqueInput>
@@ -10956,6 +11188,14 @@ export namespace Prisma {
     update?: XOR<XOR<ThemeUpdateToOneWithWhereWithoutUserPrefInput, ThemeUpdateWithoutUserPrefInput>, ThemeUncheckedUpdateWithoutUserPrefInput>
   }
 
+  export type UserUpdateOneRequiredWithoutProfileNestedInput = {
+    create?: XOR<UserCreateWithoutProfileInput, UserUncheckedCreateWithoutProfileInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProfileInput
+    upsert?: UserUpsertWithoutProfileInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutProfileInput, UserUpdateWithoutProfileInput>, UserUncheckedUpdateWithoutProfileInput>
+  }
+
   export type BigIntFieldUpdateOperationsInput = {
     set?: bigint | number
     increment?: bigint | number
@@ -10968,7 +11208,6 @@ export namespace Prisma {
     create?: XOR<Enumerable<MovieCreateWithoutProfileInput>, Enumerable<MovieUncheckedCreateWithoutProfileInput>>
     connectOrCreate?: Enumerable<MovieCreateOrConnectWithoutProfileInput>
     upsert?: Enumerable<MovieUpsertWithWhereUniqueWithoutProfileInput>
-    createMany?: MovieCreateManyProfileInputEnvelope
     set?: Enumerable<MovieWhereUniqueInput>
     disconnect?: Enumerable<MovieWhereUniqueInput>
     delete?: Enumerable<MovieWhereUniqueInput>
@@ -11301,17 +11540,25 @@ export namespace Prisma {
 
   export type ProfileCreateWithoutLovedMoviesInput = {
     id?: string
+    phoneNumber: string
+    firstname: string
+    lastname: string
     created?: Date | string
     updated?: Date | string
     lovedCategories?: GenreCreateNestedManyWithoutProfileInput
     usrTheme: ThemeCreateNestedOneWithoutUserPrefInput
+    user: UserCreateNestedOneWithoutProfileInput
   }
 
   export type ProfileUncheckedCreateWithoutLovedMoviesInput = {
     id?: string
+    phoneNumber: string
+    firstname: string
+    lastname: string
     created?: Date | string
     updated?: Date | string
     themeId: bigint | number
+    userId: string
     lovedCategories?: GenreUncheckedCreateNestedManyWithoutProfileInput
   }
 
@@ -11404,31 +11651,34 @@ export namespace Prisma {
     poster?: PosterUncheckedUpdateManyWithoutMetaInfoNestedInput
   }
 
-  export type ProfileUpsertWithoutLovedMoviesInput = {
+  export type ProfileUpsertWithWhereUniqueWithoutLovedMoviesInput = {
+    where: ProfileWhereUniqueInput
     update: XOR<ProfileUpdateWithoutLovedMoviesInput, ProfileUncheckedUpdateWithoutLovedMoviesInput>
     create: XOR<ProfileCreateWithoutLovedMoviesInput, ProfileUncheckedCreateWithoutLovedMoviesInput>
-    where?: ProfileWhereInput
   }
 
-  export type ProfileUpdateToOneWithWhereWithoutLovedMoviesInput = {
-    where?: ProfileWhereInput
+  export type ProfileUpdateWithWhereUniqueWithoutLovedMoviesInput = {
+    where: ProfileWhereUniqueInput
     data: XOR<ProfileUpdateWithoutLovedMoviesInput, ProfileUncheckedUpdateWithoutLovedMoviesInput>
   }
 
-  export type ProfileUpdateWithoutLovedMoviesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    lovedCategories?: GenreUpdateManyWithoutProfileNestedInput
-    usrTheme?: ThemeUpdateOneRequiredWithoutUserPrefNestedInput
+  export type ProfileUpdateManyWithWhereWithoutLovedMoviesInput = {
+    where: ProfileScalarWhereInput
+    data: XOR<ProfileUpdateManyMutationInput, ProfileUncheckedUpdateManyWithoutLovedMoviesInput>
   }
 
-  export type ProfileUncheckedUpdateWithoutLovedMoviesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    themeId?: BigIntFieldUpdateOperationsInput | bigint | number
-    lovedCategories?: GenreUncheckedUpdateManyWithoutProfileNestedInput
+  export type ProfileScalarWhereInput = {
+    AND?: Enumerable<ProfileScalarWhereInput>
+    OR?: Enumerable<ProfileScalarWhereInput>
+    NOT?: Enumerable<ProfileScalarWhereInput>
+    id?: StringFilter<"Profile"> | string
+    phoneNumber?: StringFilter<"Profile"> | string
+    firstname?: StringFilter<"Profile"> | string
+    lastname?: StringFilter<"Profile"> | string
+    created?: DateTimeFilter<"Profile"> | Date | string
+    updated?: DateTimeFilter<"Profile"> | Date | string
+    themeId?: BigIntFilter<"Profile"> | bigint | number
+    userId?: StringFilter<"Profile"> | string
   }
 
   export type PosterCreateWithoutMetaInfoInput = {
@@ -11462,7 +11712,7 @@ export namespace Prisma {
     updated?: Date | string
     genre?: GenreCreateNestedManyWithoutMoviesInput
     tags?: TagCreateNestedManyWithoutMoviesInput
-    Profile?: ProfileCreateNestedOneWithoutLovedMoviesInput
+    profile?: ProfileCreateNestedManyWithoutLovedMoviesInput
   }
 
   export type MovieUncheckedCreateWithoutInfoInput = {
@@ -11474,9 +11724,9 @@ export namespace Prisma {
     available?: Date | string | null
     created?: Date | string
     updated?: Date | string
-    profileId?: string | null
     genre?: GenreUncheckedCreateNestedManyWithoutMoviesInput
     tags?: TagUncheckedCreateNestedManyWithoutMoviesInput
+    profile?: ProfileUncheckedCreateNestedManyWithoutLovedMoviesInput
   }
 
   export type MovieCreateOrConnectWithoutInfoInput = {
@@ -11531,7 +11781,7 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     genre?: GenreUpdateManyWithoutMoviesNestedInput
     tags?: TagUpdateManyWithoutMoviesNestedInput
-    Profile?: ProfileUpdateOneWithoutLovedMoviesNestedInput
+    profile?: ProfileUpdateManyWithoutLovedMoviesNestedInput
   }
 
   export type MovieUncheckedUpdateWithoutInfoInput = {
@@ -11543,9 +11793,9 @@ export namespace Prisma {
     available?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    profileId?: NullableStringFieldUpdateOperationsInput | string | null
     genre?: GenreUncheckedUpdateManyWithoutMoviesNestedInput
     tags?: TagUncheckedUpdateManyWithoutMoviesNestedInput
+    profile?: ProfileUncheckedUpdateManyWithoutLovedMoviesNestedInput
   }
 
   export type MovieCreateWithoutGenreInput = {
@@ -11559,7 +11809,7 @@ export namespace Prisma {
     updated?: Date | string
     tags?: TagCreateNestedManyWithoutMoviesInput
     info: MetaInfoCreateNestedOneWithoutMovieInput
-    Profile?: ProfileCreateNestedOneWithoutLovedMoviesInput
+    profile?: ProfileCreateNestedManyWithoutLovedMoviesInput
   }
 
   export type MovieUncheckedCreateWithoutGenreInput = {
@@ -11572,8 +11822,8 @@ export namespace Prisma {
     infoId: string
     created?: Date | string
     updated?: Date | string
-    profileId?: string | null
     tags?: TagUncheckedCreateNestedManyWithoutMoviesInput
+    profile?: ProfileUncheckedCreateNestedManyWithoutLovedMoviesInput
   }
 
   export type MovieCreateOrConnectWithoutGenreInput = {
@@ -11583,17 +11833,25 @@ export namespace Prisma {
 
   export type ProfileCreateWithoutLovedCategoriesInput = {
     id?: string
+    phoneNumber: string
+    firstname: string
+    lastname: string
     created?: Date | string
     updated?: Date | string
     lovedMovies?: MovieCreateNestedManyWithoutProfileInput
     usrTheme: ThemeCreateNestedOneWithoutUserPrefInput
+    user: UserCreateNestedOneWithoutProfileInput
   }
 
   export type ProfileUncheckedCreateWithoutLovedCategoriesInput = {
     id?: string
+    phoneNumber: string
+    firstname: string
+    lastname: string
     created?: Date | string
     updated?: Date | string
     themeId: bigint | number
+    userId: string
     lovedMovies?: MovieUncheckedCreateNestedManyWithoutProfileInput
   }
 
@@ -11631,7 +11889,6 @@ export namespace Prisma {
     infoId?: StringFilter<"Movie"> | string
     created?: DateTimeFilter<"Movie"> | Date | string
     updated?: DateTimeFilter<"Movie"> | Date | string
-    profileId?: StringNullableFilter<"Movie"> | string | null
   }
 
   export type ProfileUpsertWithWhereUniqueWithoutLovedCategoriesInput = {
@@ -11650,16 +11907,6 @@ export namespace Prisma {
     data: XOR<ProfileUpdateManyMutationInput, ProfileUncheckedUpdateManyWithoutLovedCategoriesInput>
   }
 
-  export type ProfileScalarWhereInput = {
-    AND?: Enumerable<ProfileScalarWhereInput>
-    OR?: Enumerable<ProfileScalarWhereInput>
-    NOT?: Enumerable<ProfileScalarWhereInput>
-    id?: StringFilter<"Profile"> | string
-    created?: DateTimeFilter<"Profile"> | Date | string
-    updated?: DateTimeFilter<"Profile"> | Date | string
-    themeId?: BigIntFilter<"Profile"> | bigint | number
-  }
-
   export type MovieCreateWithoutTagsInput = {
     movieId?: string
     title: string
@@ -11671,7 +11918,7 @@ export namespace Prisma {
     updated?: Date | string
     genre?: GenreCreateNestedManyWithoutMoviesInput
     info: MetaInfoCreateNestedOneWithoutMovieInput
-    Profile?: ProfileCreateNestedOneWithoutLovedMoviesInput
+    profile?: ProfileCreateNestedManyWithoutLovedMoviesInput
   }
 
   export type MovieUncheckedCreateWithoutTagsInput = {
@@ -11684,8 +11931,8 @@ export namespace Prisma {
     infoId: string
     created?: Date | string
     updated?: Date | string
-    profileId?: string | null
     genre?: GenreUncheckedCreateNestedManyWithoutMoviesInput
+    profile?: ProfileUncheckedCreateNestedManyWithoutLovedMoviesInput
   }
 
   export type MovieCreateOrConnectWithoutTagsInput = {
@@ -11765,6 +12012,56 @@ export namespace Prisma {
     Movie?: MovieUncheckedUpdateOneWithoutInfoNestedInput
   }
 
+  export type ProfileCreateWithoutUserInput = {
+    id?: string
+    phoneNumber: string
+    firstname: string
+    lastname: string
+    created?: Date | string
+    updated?: Date | string
+    lovedMovies?: MovieCreateNestedManyWithoutProfileInput
+    lovedCategories?: GenreCreateNestedManyWithoutProfileInput
+    usrTheme: ThemeCreateNestedOneWithoutUserPrefInput
+  }
+
+  export type ProfileUncheckedCreateWithoutUserInput = {
+    id?: string
+    phoneNumber: string
+    firstname: string
+    lastname: string
+    created?: Date | string
+    updated?: Date | string
+    themeId: bigint | number
+    lovedMovies?: MovieUncheckedCreateNestedManyWithoutProfileInput
+    lovedCategories?: GenreUncheckedCreateNestedManyWithoutProfileInput
+  }
+
+  export type ProfileCreateOrConnectWithoutUserInput = {
+    where: ProfileWhereUniqueInput
+    create: XOR<ProfileCreateWithoutUserInput, ProfileUncheckedCreateWithoutUserInput>
+  }
+
+  export type ProfileCreateManyUserInputEnvelope = {
+    data: Enumerable<ProfileCreateManyUserInput>
+    skipDuplicates?: boolean
+  }
+
+  export type ProfileUpsertWithWhereUniqueWithoutUserInput = {
+    where: ProfileWhereUniqueInput
+    update: XOR<ProfileUpdateWithoutUserInput, ProfileUncheckedUpdateWithoutUserInput>
+    create: XOR<ProfileCreateWithoutUserInput, ProfileUncheckedCreateWithoutUserInput>
+  }
+
+  export type ProfileUpdateWithWhereUniqueWithoutUserInput = {
+    where: ProfileWhereUniqueInput
+    data: XOR<ProfileUpdateWithoutUserInput, ProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ProfileUpdateManyWithWhereWithoutUserInput = {
+    where: ProfileScalarWhereInput
+    data: XOR<ProfileUpdateManyMutationInput, ProfileUncheckedUpdateManyWithoutUserInput>
+  }
+
   export type MovieCreateWithoutProfileInput = {
     movieId?: string
     title: string
@@ -11796,11 +12093,6 @@ export namespace Prisma {
   export type MovieCreateOrConnectWithoutProfileInput = {
     where: MovieWhereUniqueInput
     create: XOR<MovieCreateWithoutProfileInput, MovieUncheckedCreateWithoutProfileInput>
-  }
-
-  export type MovieCreateManyProfileInputEnvelope = {
-    data: Enumerable<MovieCreateManyProfileInput>
-    skipDuplicates?: boolean
   }
 
   export type GenreCreateWithoutProfileInput = {
@@ -11845,6 +12137,25 @@ export namespace Prisma {
   export type ThemeCreateOrConnectWithoutUserPrefInput = {
     where: ThemeWhereUniqueInput
     create: XOR<ThemeCreateWithoutUserPrefInput, ThemeUncheckedCreateWithoutUserPrefInput>
+  }
+
+  export type UserCreateWithoutProfileInput = {
+    id?: string
+    userEmail: string
+    created?: Date | string
+    updated?: Date | string
+  }
+
+  export type UserUncheckedCreateWithoutProfileInput = {
+    id?: string
+    userEmail: string
+    created?: Date | string
+    updated?: Date | string
+  }
+
+  export type UserCreateOrConnectWithoutProfileInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutProfileInput, UserUncheckedCreateWithoutProfileInput>
   }
 
   export type MovieUpsertWithWhereUniqueWithoutProfileInput = {
@@ -11906,18 +12217,51 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type UserUpsertWithoutProfileInput = {
+    update: XOR<UserUpdateWithoutProfileInput, UserUncheckedUpdateWithoutProfileInput>
+    create: XOR<UserCreateWithoutProfileInput, UserUncheckedCreateWithoutProfileInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutProfileInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutProfileInput, UserUncheckedUpdateWithoutProfileInput>
+  }
+
+  export type UserUpdateWithoutProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userEmail?: StringFieldUpdateOperationsInput | string
+    created?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserUncheckedUpdateWithoutProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userEmail?: StringFieldUpdateOperationsInput | string
+    created?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ProfileCreateWithoutUsrThemeInput = {
     id?: string
+    phoneNumber: string
+    firstname: string
+    lastname: string
     created?: Date | string
     updated?: Date | string
     lovedMovies?: MovieCreateNestedManyWithoutProfileInput
     lovedCategories?: GenreCreateNestedManyWithoutProfileInput
+    user: UserCreateNestedOneWithoutProfileInput
   }
 
   export type ProfileUncheckedCreateWithoutUsrThemeInput = {
     id?: string
+    phoneNumber: string
+    firstname: string
+    lastname: string
     created?: Date | string
     updated?: Date | string
+    userId: string
     lovedMovies?: MovieUncheckedCreateNestedManyWithoutProfileInput
     lovedCategories?: GenreUncheckedCreateNestedManyWithoutProfileInput
   }
@@ -11995,6 +12339,41 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ProfileUpdateWithoutLovedMoviesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
+    created?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    lovedCategories?: GenreUpdateManyWithoutProfileNestedInput
+    usrTheme?: ThemeUpdateOneRequiredWithoutUserPrefNestedInput
+    user?: UserUpdateOneRequiredWithoutProfileNestedInput
+  }
+
+  export type ProfileUncheckedUpdateWithoutLovedMoviesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
+    created?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    themeId?: BigIntFieldUpdateOperationsInput | bigint | number
+    userId?: StringFieldUpdateOperationsInput | string
+    lovedCategories?: GenreUncheckedUpdateManyWithoutProfileNestedInput
+  }
+
+  export type ProfileUncheckedUpdateManyWithoutLovedMoviesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
+    created?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    themeId?: BigIntFieldUpdateOperationsInput | bigint | number
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
   export type PosterCreateManyMetaInfoInput = {
     id?: string
     imgUrl: string
@@ -12026,7 +12405,7 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     tags?: TagUpdateManyWithoutMoviesNestedInput
     info?: MetaInfoUpdateOneRequiredWithoutMovieNestedInput
-    Profile?: ProfileUpdateOneWithoutLovedMoviesNestedInput
+    profile?: ProfileUpdateManyWithoutLovedMoviesNestedInput
   }
 
   export type MovieUncheckedUpdateWithoutGenreInput = {
@@ -12039,8 +12418,8 @@ export namespace Prisma {
     infoId?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    profileId?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: TagUncheckedUpdateManyWithoutMoviesNestedInput
+    profile?: ProfileUncheckedUpdateManyWithoutLovedMoviesNestedInput
   }
 
   export type MovieUncheckedUpdateManyWithoutGenreInput = {
@@ -12053,30 +12432,41 @@ export namespace Prisma {
     infoId?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    profileId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProfileUpdateWithoutLovedCategoriesInput = {
     id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     lovedMovies?: MovieUpdateManyWithoutProfileNestedInput
     usrTheme?: ThemeUpdateOneRequiredWithoutUserPrefNestedInput
+    user?: UserUpdateOneRequiredWithoutProfileNestedInput
   }
 
   export type ProfileUncheckedUpdateWithoutLovedCategoriesInput = {
     id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     themeId?: BigIntFieldUpdateOperationsInput | bigint | number
+    userId?: StringFieldUpdateOperationsInput | string
     lovedMovies?: MovieUncheckedUpdateManyWithoutProfileNestedInput
   }
 
   export type ProfileUncheckedUpdateManyWithoutLovedCategoriesInput = {
     id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     themeId?: BigIntFieldUpdateOperationsInput | bigint | number
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type MovieUpdateWithoutTagsInput = {
@@ -12090,7 +12480,7 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     genre?: GenreUpdateManyWithoutMoviesNestedInput
     info?: MetaInfoUpdateOneRequiredWithoutMovieNestedInput
-    Profile?: ProfileUpdateOneWithoutLovedMoviesNestedInput
+    profile?: ProfileUpdateManyWithoutLovedMoviesNestedInput
   }
 
   export type MovieUncheckedUpdateWithoutTagsInput = {
@@ -12103,8 +12493,8 @@ export namespace Prisma {
     infoId?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    profileId?: NullableStringFieldUpdateOperationsInput | string | null
     genre?: GenreUncheckedUpdateManyWithoutMoviesNestedInput
+    profile?: ProfileUncheckedUpdateManyWithoutLovedMoviesNestedInput
   }
 
   export type MovieUncheckedUpdateManyWithoutTagsInput = {
@@ -12117,19 +12507,50 @@ export namespace Prisma {
     infoId?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    profileId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type MovieCreateManyProfileInput = {
-    movieId?: string
-    title: string
-    description?: string | null
-    length?: number | null
-    released?: Date | string | null
-    available?: Date | string | null
-    infoId: string
+  export type ProfileCreateManyUserInput = {
+    id?: string
+    phoneNumber: string
+    firstname: string
+    lastname: string
     created?: Date | string
     updated?: Date | string
+    themeId: bigint | number
+  }
+
+  export type ProfileUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
+    created?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    lovedMovies?: MovieUpdateManyWithoutProfileNestedInput
+    lovedCategories?: GenreUpdateManyWithoutProfileNestedInput
+    usrTheme?: ThemeUpdateOneRequiredWithoutUserPrefNestedInput
+  }
+
+  export type ProfileUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
+    created?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    themeId?: BigIntFieldUpdateOperationsInput | bigint | number
+    lovedMovies?: MovieUncheckedUpdateManyWithoutProfileNestedInput
+    lovedCategories?: GenreUncheckedUpdateManyWithoutProfileNestedInput
+  }
+
+  export type ProfileUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
+    created?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    themeId?: BigIntFieldUpdateOperationsInput | bigint | number
   }
 
   export type MovieUpdateWithoutProfileInput = {
@@ -12200,30 +12621,46 @@ export namespace Prisma {
 
   export type ProfileCreateManyUsrThemeInput = {
     id?: string
+    phoneNumber: string
+    firstname: string
+    lastname: string
     created?: Date | string
     updated?: Date | string
+    userId: string
   }
 
   export type ProfileUpdateWithoutUsrThemeInput = {
     id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     lovedMovies?: MovieUpdateManyWithoutProfileNestedInput
     lovedCategories?: GenreUpdateManyWithoutProfileNestedInput
+    user?: UserUpdateOneRequiredWithoutProfileNestedInput
   }
 
   export type ProfileUncheckedUpdateWithoutUsrThemeInput = {
     id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
     lovedMovies?: MovieUncheckedUpdateManyWithoutProfileNestedInput
     lovedCategories?: GenreUncheckedUpdateManyWithoutProfileNestedInput
   }
 
   export type ProfileUncheckedUpdateManyWithoutUsrThemeInput = {
     id?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
 

@@ -1,4 +1,4 @@
-import { prisma } from "../../src/db/prisma";
+import { prisma } from "../../lib/prisma";
 
 export default async (req, res) => {
     if (req.method !== "GET" ) {

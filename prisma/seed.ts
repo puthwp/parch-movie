@@ -4,7 +4,7 @@ import { prisma } from "../lib/prisma";
 async function createGenres() {
   const genrePromises = Array('Action','Animation','Comedy','Crime','Drama','Fantasy','Historical','Horror','Romance','Science Fiction','Thriller','Western','Other')
     .map((g) => {
-      return prisma.category.upsert({
+      return prisma.genre.upsert({
         where: {
           name: g,
         },
@@ -21,11 +21,11 @@ async function createGenres() {
 }
 
 async function getAllGenre() {
-  return await prisma.category.findMany();
+  return await prisma.genre.findMany();
 }
 
 async function randomGenre() {
-    return await prisma.$transaction(getAllGenre[(Math.floor(Math.random() * getAllGenre.length))])
+    return getAllGenre[(Math.floor(Math.random() * getAllGenre.length))]
 }
 
 async function createThemes() {
@@ -70,34 +70,37 @@ async function getRandomTags() {
       },
     });
   });
-  return prisma.$transaction(tags);
+  return mockTags
 }
 
-async function createMovies() {
-  const moviesPromises = Array(50)
-    .fill(null)
-    .map(() => {
-      // const tags = await randomTags();
-      const released = faker.date.recent({
-        refDate: "2000-01-01T00:00:00.000Z",
-      });
-      const tags = randomTags()
-      return prisma.movie.upsert({
-        where: {},
-        update: {},
-        create: {
-          title: faker.lorem.sentence({ min: 1, max: 12 }),
-          description: faker.lorem.lines({ min: 2, max: 6 }),
-          length: faker.number.int({ min: 90, max: 240 }),
-          released: released,
-          available: faker.date.soon({ refDate: released }),
-          // tags: {
-          //     connect: tags
-          // },
-          // genre: randomGenre(),
-        },
-      });
-    });
+// async function createMovies() {
+//   const moviesPromises = Array(50)
+//     .fill(null)
+//     .map(() => {
+//       const released = faker.date.recent({
+//         refDate: "2000-01-01T00:00:00.000Z",
+//       });
+//       return prisma.movie.upsert({
+//         where: {},
+//         update: {},
+//         create: {
+//           title: faker.lorem.sentence({ min: 1, max: 12 }),
+//           description: faker.lorem.lines({ min: 2, max: 6 }),
+//           length: faker.number.int({ min: 90, max: 240 }),
+//           released: released,
+//           available: faker.date.soon({ refDate: released }),
+//           tags: {
+//             create: getRandomTags
+//           },
+//           genre: {
+//             connect: {
+//               id: randomGenre.bind
+//             }
+//           }
+//           // genre: randomGenre(),
+//         },
+//       });
+//     });
   // const tagPromises = Array(20).fill(null).map(() => {
   //     return prisma.tag.create({
   //         data: {
@@ -111,8 +114,8 @@ async function createMovies() {
   //     });
   // });
   // const tags =await prisma.$transaction(tagPromises);
-  return prisma.$transaction(moviesPromises);
-}
+  // return prisma.$transaction(moviesPromises);
+// }
 
 async function main() {
   console.log(`Start seeding ...`);
@@ -133,35 +136,61 @@ async function main() {
   console.log("Default theme generated...")
   console.log({theme})
 
-  //Seeding Users
-  const numberOfUsers = Math.random() * 10
-  const users = Array(numberOfUsers).fill(null)
+  // Seeding Users
+  console.log("Start seeding Users")
+  const numberOfUsers = Math.floor(Math.random() * 10)
+  const usersWithGenresPromises = await Array(numberOfUsers).fill(null)
                                     .map((_, i) => {
-                                      const firstname = faker.person.firstName()
-                                      const lastname = faker.person.lastName()
+                                      const firstname = faker.person.firstName();
+                                      const lastname = faker.person.lastName();
                                       const email = faker.internet.email({
                                                           firstName: firstname,
                                                           lastName: lastname,
                                                           provider: 'gmail.com'
-                                                        })
-                                      const user = prisma.user.findFirst({
+                                                        });
+                                      const phone = faker.phone.number('0#########');
+                                      return prisma.profile.upsert({
                                         where: {
-                                          userEmail: email
-                                        }
-                                      })
-                                      return await prisma..upsert({
-                                        where: {
-                                          usrId: user.id
+                                          user: {
+                                            userEmail: email
+                                          }
                                         },
                                         update: {
-                                          first
+                                          firstname: firstname,
+                                          lastname: lastname,
+                                          phoneNumber: phone
                                         },
                                         create: {
-
+                                          firstname: firstname,
+                                          lastname: lastname,
+                                          phoneNumber: phone,
+                                          user: {
+                                            connectOrCreate: {
+                                              where: {
+                                                userEmail: email
+                                              },
+                                              create: {
+                                                userEmail: email
+                                              }
+                                            }
+                                          },
+                                          usrTheme: {
+                                            connectOrCreate: {
+                                              where: {
+                                                themeName: 'default'
+                                              },
+                                              create: {
+                                                themeColor: faker.color.rgb(),
+                                                themeName: faker.color.human()
+                                              }
+                                            }
+                                          }
                                         }
                                       })
-                                    })
-
+                                    });
+  const usersWithGenre = await prisma.$transaction(usersWithGenresPromises)
+  console.log("Generated Users")
+  console.log({ usersWithGenre })
   // const movies = await createMovies();
   // console.log("Movies generated...");
   // console.log({ movies });

@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "./generated/sqlite"
 }
 
 datasource db {
@@ -34,7 +33,7 @@ model MetaInfo {
   poster      Poster[]
   created     DateTime @default(now())
   updated     DateTime @updatedAt
-  Movie       Movie?
+  movie       Movie?
 }
 
 model Genre {
@@ -71,18 +70,18 @@ model User {
 }
 
 model Profile {
-  id              String   @id @default(cuid())
-  phoneNumber     String   @unique
-  firstname       String
-  lastname        String
-  lovedMovies     Movie[]
-  lovedCategories Genre[]
-  usrTheme        Theme    @relation(fields: [themeId], references: [id])
-  created         DateTime @default(now())
-  updated         DateTime @updatedAt
-  themeId         BigInt
-  user            User     @relation(fields: [userId], references: [id])
-  userId          String
+  id          String   @id @default(cuid())
+  phoneNumber String   @unique
+  firstname   String
+  lastname    String
+  lovedMovies Movie[]
+  lovedGenres Genre[]
+  usrTheme    Theme    @relation(fields: [themeId], references: [id])
+  themeId     BigInt
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  created     DateTime @default(now())
+  updated     DateTime @updatedAt
 }
 
 model Theme {
@@ -91,5 +90,5 @@ model Theme {
   themeColor String
   created    DateTime  @default(now())
   updated    DateTime  @updatedAt
-  userPref   Profile[]
+  users      Profile[]
 }

@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/sqlite"
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+// datasource db {
+//   provider = "cockroachdb"
+//   url      = env("DATABASE_URL")
+// }
+
+model Movie {
+  movieId     String  @id @default(cuid())
+  title       String
+  description String?
+  genre       Genre[]
+  tags        Tag[]
+
+  length    Int?
+  released  DateTime?
+  available DateTime?
+  info      MetaInfo  @relation(fields: [infoId], references: [id])
+  infoId    String    @unique
+
+  created   DateTime @default(now())
+  updated   DateTime @updatedAt
+  Profile   Profile? @relation(fields: [profileId], references: [id])
+  profileId String?
+}
+
+model MetaInfo {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  movieId     String
+  poster      Poster[]
+  created     DateTime @default(now())
+  updated     DateTime @updatedAt
+  Movie       Movie?
+}
+
+model Genre {
+  id      String    @id @default(cuid())
+  name    String    @unique
+  info    String
+  created DateTime  @default(now())
+  updated DateTime  @updatedAt
+  movies  Movie[]
+  profile Profile[]
+}
+
+model Tag {
+  id      String   @id @default(cuid())
+  name    String   @unique
+  created DateTime @default(now())
+  updated DateTime @updatedAt
+  movies  Movie[]
+}
+
+model Poster {
+  id         String    @id @default(cuid())
+  imgUrl     String
+  MetaInfo   MetaInfo? @relation(fields: [metaInfoId], references: [id])
+  metaInfoId String?
+}
+
+model User {
+  id          String   @id @default(uuid())
+  userEmail   String   @unique
+  phoneNumber String   @unique
+  profileID   String
+  created     DateTime @default(now())
+  updated     DateTime @updatedAt
+}
+
+model Profile {
+  id              String   @id @default(cuid())
+  lovedMovies     Movie[]
+  lovedCategories Genre[]
+  usrTheme        Theme    @relation(fields: [themeId], references: [id])
+  created         DateTime @default(now())
+  updated         DateTime @updatedAt
+  themeId         BigInt
+
+  @@map("UserPref")
+}
+
+model Theme {
+  id         BigInt    @id @default(autoincrement())
+  themeName  String    @unique
+  themeColor String
+  created    DateTime  @default(now())
+  updated    DateTime  @updatedAt
+  UserPref   Profile[]
+}

@@ -9,6 +9,9 @@ nvm install 18.17.0
 nvm use 18
 
 cd parch-movie && npm install
+
+cp ./src/dbenv ./.env
+
 npx prisma generate
 npx prisma migrate dev
 npx prisma db seed

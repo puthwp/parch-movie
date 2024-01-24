@@ -36,11 +36,24 @@ check
 `nvm install 18.17.0`
 `nvm use 18`
 
+
+
 ### Packages Install ###
 ```
 cd parch-movie && npm install
+```
+*important to copy dbenv to .env in root folder*
+
+`cp ./src/dbenv ./.env`
+
+then run and check the result 🤞🏼
+```
 npx prisma generate
 npx prisma migrate dev
+```
+or if you got the fail result 
+you can try this command to seed the database ✌🏼
+```
 npx prisma db seed
 ```
 

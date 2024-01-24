@@ -3,7 +3,7 @@ import { prisma } from "../../../lib/prisma";
 export default async function handle(req, res) {
     const genre = req.query.name;
 
-    if (req.method !== "GET") {
+    if (req.method === "GET") {
         handleGenre(genre, res);
     } else {
         throw new Error(`The HTTP ${req.method} method is not supported at this route.`);

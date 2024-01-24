@@ -1,54 +1,63 @@
 import { faker } from "@faker-js/faker";
 import { prisma } from "../lib/prisma";
+import { profile } from 'node:console';
+
+const baseGenres = Array(
+  "Action",
+  "Animation",
+  "Comedy",
+  "Crime",
+  "Drama",
+  "Fantasy",
+  "Historical",
+  "Horror",
+  "Romance",
+  "Science Fiction",
+  "Thriller",
+  "Western",
+  "Other"
+);
 
 async function createGenres() {
-  const genrePromises = Array('Action','Animation','Comedy','Crime','Drama','Fantasy','Historical','Horror','Romance','Science Fiction','Thriller','Western','Other')
-    .map((g) => {
-      return prisma.genre.upsert({
-        where: {
-          name: g,
-        },
-        update: {
-          info: faker.lorem.lines({ min: 2, max: 4 })
-        },
-        create: {
-          name: g,
-          info: faker.lorem.lines({ min: 2, max: 4 }),
-        },
-      });
+  const genrePromises = baseGenres.map((g) => {
+    const gl = g.toLowerCase();
+    return prisma.genre.upsert({
+      where: {
+        name: gl,
+      },
+      update: {
+        info: faker.lorem.lines({ min: 2, max: 4 }),
+      },
+      create: {
+        name: gl,
+        info: faker.lorem.lines({ min: 2, max: 4 }),
+      },
     });
+  });
   return prisma.$transaction(genrePromises);
-}
-
-async function getAllGenre() {
-  return await prisma.genre.findMany();
-}
-
-async function randomGenre() {
-    return getAllGenre[(Math.floor(Math.random() * getAllGenre.length))]
 }
 
 async function createThemes() {
   return await prisma.theme.upsert({
     where: {
-      themeName: 'default'
+      themeName: "default",
     },
     update: {
-      themeName: 'default',
-      themeColor: faker.color.rgb()
+      themeName: "default",
+      themeColor: faker.color.rgb(),
     },
     create: {
-      themeName: 'default',
-      themeColor: faker.color.rgb()
-    }
-  })
+      themeName: "default",
+      themeColor: faker.color.rgb(),
+    },
+  });
 }
 
 async function getDefaultTheme() {
   return await prisma.theme.findFirst({
     where: {
-      themeName: 'default'
-    }
+      themeName: "default",
+    },
   });
 }
 
@@ -60,17 +69,17 @@ async function getRandomTags() {
   const tags = mockTags.map((tag) => {
     return prisma.tag.upsert({
       where: {
-        name: tag
+        name: tag,
       },
       update: {
-        name: tag
+        name: tag,
       },
       create: {
         name: tag,
       },
     });
   });
-  return mockTags
+  return mockTags;
 }
 
 // async function createMovies() {
@@ -101,30 +110,24 @@ async function getRandomTags() {
 //         },
 //       });
 //     });
-  // const tagPromises = Array(20).fill(null).map(() => {
-  //     return prisma.tag.create({
-  //         data: {
-  //             name: faker.music.genre(),
-  //             movies: {
-  //                 connect: {
-  //                     id: movieId
-  //                 },
-  //             },
-  //         },
-  //     });
-  // });
-  // const tags =await prisma.$transaction(tagPromises);
-  // return prisma.$transaction(moviesPromises);
+// const tagPromises = Array(20).fill(null).map(() => {
+//     return prisma.tag.create({
+//         data: {
+//             name: faker.music.genre(),
+//             movies: {
+//                 connect: {
+//                     id: movieId
+//                 },
+//             },
+//         },
+//     });
+// });
+// const tags =await prisma.$transaction(tagPromises);
+// return prisma.$transaction(moviesPromises);
 // }
 
 async function main() {
   console.log(`Start seeding ...`);
-  // for (const u of userData) {
-  //   const user = await prisma.user.create({
-  //     data: u,
-  //   })
-  //   console.log(`Created user with id: ${user.id}`)
-  // }
 
   //Seeding Genre
   const genre = await createGenres();
@@ -132,65 +135,67 @@ async function main() {
   console.log({ genre });
 
   //Seeding Theme
-  const theme = await createThemes()
-  console.log("Default theme generated...")
-  console.log({theme})
+  const theme = await createThemes();
+  console.log("Default theme generated...");
+  console.log({ theme });
 
   // Seeding Users
-  console.log("Start seeding Users")
-  const numberOfUsers = Math.floor(Math.random() * 10)
-  const usersWithGenresPromises = await Array(numberOfUsers).fill(null)
-                                    .map((_, i) => {
-                                      const firstname = faker.person.firstName();
-                                      const lastname = faker.person.lastName();
-                                      const email = faker.internet.email({
-                                                          firstName: firstname,
-                                                          lastName: lastname,
-                                                          provider: 'gmail.com'
-                                                        });
-                                      const phone = faker.phone.number('0#########');
-                                      return prisma.profile.upsert({
-                                        where: {
-                                          user: {
-                                            userEmail: email
-                                          }
-                                        },
-                                        update: {
-                                          firstname: firstname,
-                                          lastname: lastname,
-                                          phoneNumber: phone
-                                        },
-                                        create: {
-                                          firstname: firstname,
-                                          lastname: lastname,
-                                          phoneNumber: phone,
-                                          user: {
-                                            connectOrCreate: {
-                                              where: {
-                                                userEmail: email
-                                              },
-                                              create: {
-                                                userEmail: email
-                                              }
-                                            }
-                                          },
-                                          usrTheme: {
-                                            connectOrCreate: {
-                                              where: {
-                                                themeName: 'default'
-                                              },
-                                              create: {
-                                                themeColor: faker.color.rgb(),
-                                                themeName: faker.color.human()
-                                              }
-                                            }
-                                          }
-                                        }
-                                      })
-                                    });
-  const usersWithGenre = await prisma.$transaction(usersWithGenresPromises)
-  console.log("Generated Users")
-  console.log({ usersWithGenre })
+  console.log("Start seeding Users");
+  const numberOfUsers = Math.floor(Math.random() * 10);
+  const usersWithGenresPromises = await Array(numberOfUsers)
+    .fill(null)
+    .map((_, i) => {
+      const genfirstname = faker.person.firstName();
+      const genlastname = faker.person.lastName();
+      const genemail = faker.internet.email({
+        firstName: genfirstname,
+        lastName: genlastname,
+        provider: "gmail.com",
+      }).toLowerCase();
+      const genphone = faker.helpers.fromRegExp("0[6,8,9][d]{8}");
+      // const randGenres = _.sample(
+      //   baseGenres,
+      //   Math.floor(Math.random() * baseGenres.length)
+      // );
+      return prisma.user.upsert({
+        where: {
+          email: genemail,
+        },
+        update: {},
+        create: {
+          email: genemail,
+          profile: {
+            connectOrCreate: {
+              where: {
+                pid: '0'
+              },
+              create: {
+                firstname: genfirstname,
+                lastname: genlastname,
+                phone: genphone,
+                usrTheme: {
+                  connectOrCreate: {
+                    where: {
+                      themeName: "default",
+                    },
+                    create: {
+                      themeName: "default",
+                      themeColor: faker.color.rgb(),
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        include: {
+          profile: true,
+        },
+      });
+    });
+  const usersWithGenre = await prisma.$transaction(usersWithGenresPromises);
+  console.log("Generated " + numberOfUsers + " Users");
+  console.log({ usersWithGenre });
   // const movies = await createMovies();
   // console.log("Movies generated...");
   // console.log({ movies });

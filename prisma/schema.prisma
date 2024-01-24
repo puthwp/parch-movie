@@ -11,22 +11,22 @@ model Movie {
   movieId     String  @id @default(cuid())
   title       String
   description String?
-  genre       Genre[]
+  genres      Genre[]
   tags        Tag[]
 
   length    Int?
   released  DateTime?
   available DateTime?
-  info      MetaInfo  @relation(fields: [infoId], references: [id])
+  info      MetaInfo  @relation(fields: [infoId], references: [mid])
   infoId    String    @unique
 
-  created DateTime  @default(now())
-  updated DateTime  @updatedAt
-  profile Profile[]
+  created  DateTime  @default(now())
+  updated  DateTime  @updatedAt
+  profiles Profile[]
 }
 
 model MetaInfo {
-  id          String   @id @default(cuid())
+  mid         String   @id @default(cuid())
   title       String
   description String
   movieId     String
@@ -37,17 +37,17 @@ model MetaInfo {
 }
 
 model Genre {
-  id      String    @id @default(cuid())
-  name    String    @unique
-  info    String
-  created DateTime  @default(now())
-  updated DateTime  @updatedAt
-  movies  Movie[]
-  profile Profile[]
+  gid      String    @id @default(cuid())
+  name     String    @unique
+  info     String
+  created  DateTime  @default(now())
+  updated  DateTime  @updatedAt
+  movies   Movie[]
+  profiles Profile[]
 }
 
 model Tag {
-  id      String   @id @default(cuid())
+  tid     String   @id @default(cuid())
   name    String   @unique
   created DateTime @default(now())
   updated DateTime @updatedAt
@@ -55,40 +55,40 @@ model Tag {
 }
 
 model Poster {
-  id         String    @id @default(cuid())
+  pid        String    @id @default(cuid())
   imgUrl     String
-  MetaInfo   MetaInfo? @relation(fields: [metaInfoId], references: [id])
+  MetaInfo   MetaInfo? @relation(fields: [metaInfoId], references: [mid])
   metaInfoId String?
 }
 
 model User {
-  id        String    @id @default(uuid())
-  userEmail String    @unique
-  created   DateTime  @default(now())
-  updated   DateTime  @updatedAt
-  profile   Profile[]
+  uid       String   @id @default(uuid())
+  email     String   @unique
+  created   DateTime @default(now())
+  updated   DateTime @updatedAt
+  profile   Profile? @relation(fields: [profileId], references: [pid])
+  profileId String?  @unique
 }
 
 model Profile {
-  id          String   @id @default(cuid())
-  phoneNumber String   @unique
+  pid         String   @id @default(cuid())
+  phone       String
   firstname   String
   lastname    String
   lovedMovies Movie[]
   lovedGenres Genre[]
-  usrTheme    Theme    @relation(fields: [themeId], references: [id])
+  usrTheme    Theme    @relation(fields: [themeId], references: [thid])
   themeId     BigInt
-  user        User     @relation(fields: [userId], references: [id])
-  userId      String
   created     DateTime @default(now())
   updated     DateTime @updatedAt
+  User        User?
 }
 
 model Theme {
-  id         BigInt    @id @default(autoincrement())
+  thid       BigInt    @id @default(autoincrement())
   themeName  String    @unique
   themeColor String
   created    DateTime  @default(now())
   updated    DateTime  @updatedAt
-  users      Profile[]
+  profiles   Profile[]
 }

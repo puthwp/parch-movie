@@ -2,11 +2,11 @@
 CREATE TABLE "Movie" (
     "movieId" STRING NOT NULL,
     "title" STRING NOT NULL,
-    "description" STRING,
+    "description" STRING NOT NULL,
+    "infoId" STRING,
     "length" INT4,
     "released" TIMESTAMP(3),
     "available" TIMESTAMP(3),
-    "infoId" STRING NOT NULL,
     "created" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated" TIMESTAMP(3) NOT NULL,
 
@@ -18,7 +18,6 @@ CREATE TABLE "MetaInfo" (
     "mid" STRING NOT NULL,
     "title" STRING NOT NULL,
     "description" STRING NOT NULL,
-    "movieId" STRING NOT NULL,
     "created" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated" TIMESTAMP(3) NOT NULL,
 
@@ -61,6 +60,7 @@ CREATE TABLE "User" (
     "email" STRING NOT NULL,
     "created" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated" TIMESTAMP(3) NOT NULL,
+    "profileId" STRING,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("uid")
 );
@@ -71,8 +71,7 @@ CREATE TABLE "Profile" (
     "phone" STRING NOT NULL,
     "firstname" STRING NOT NULL,
     "lastname" STRING NOT NULL,
-    "themeId" INT8 NOT NULL,
-    "usrid" STRING NOT NULL,
+    "themeId" STRING NOT NULL,
     "created" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated" TIMESTAMP(3) NOT NULL,
 
@@ -81,7 +80,7 @@ CREATE TABLE "Profile" (
 
 -- CreateTable
 CREATE TABLE "Theme" (
-    "thid" INT8 NOT NULL DEFAULT unique_rowid(),
+    "thid" STRING NOT NULL,
     "themeName" STRING NOT NULL,
     "themeColor" STRING NOT NULL,
     "created" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -124,7 +123,10 @@ CREATE UNIQUE INDEX "Genre_name_key" ON "Genre"("name");
 CREATE UNIQUE INDEX "Tag_name_key" ON "Tag"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Profile_usrid_key" ON "Profile"("usrid");
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_profileId_key" ON "User"("profileId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Theme_themeName_key" ON "Theme"("themeName");
@@ -154,16 +156,16 @@ CREATE UNIQUE INDEX "_GenreToProfile_AB_unique" ON "_GenreToProfile"("A", "B");
 CREATE INDEX "_GenreToProfile_B_index" ON "_GenreToProfile"("B");
 
 -- AddForeignKey
-ALTER TABLE "Movie" ADD CONSTRAINT "Movie_infoId_fkey" FOREIGN KEY ("infoId") REFERENCES "MetaInfo"("mid") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Movie" ADD CONSTRAINT "Movie_infoId_fkey" FOREIGN KEY ("infoId") REFERENCES "MetaInfo"("mid") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Poster" ADD CONSTRAINT "Poster_metaInfoId_fkey" FOREIGN KEY ("metaInfoId") REFERENCES "MetaInfo"("mid") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Profile" ADD CONSTRAINT "Profile_themeId_fkey" FOREIGN KEY ("themeId") REFERENCES "Theme"("thid") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "User" ADD CONSTRAINT "User_profileId_fkey" FOREIGN KEY ("profileId") REFERENCES "Profile"("pid") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Profile" ADD CONSTRAINT "Profile_usrid_fkey" FOREIGN KEY ("usrid") REFERENCES "User"("uid") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Profile" ADD CONSTRAINT "Profile_themeId_fkey" FOREIGN KEY ("themeId") REFERENCES "Theme"("thid") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_MovieToTag" ADD CONSTRAINT "_MovieToTag_A_fkey" FOREIGN KEY ("A") REFERENCES "Movie"("movieId") ON DELETE CASCADE ON UPDATE CASCADE;

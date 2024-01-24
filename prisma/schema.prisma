@@ -8,17 +8,16 @@ datasource db {
 }
 
 model Movie {
-  movieId     String  @id @default(cuid())
+  movieId     String    @id @default(cuid())
   title       String
-  description String?
+  description String
   genres      Genre[]
   tags        Tag[]
-
-  length    Int?
-  released  DateTime?
-  available DateTime?
-  info      MetaInfo  @relation(fields: [infoId], references: [mid])
-  infoId    String    @unique
+  info        MetaInfo? @relation(fields: [infoId], references: [mid])
+  infoId      String?   @unique
+  length      Int?
+  released    DateTime?
+  available   DateTime?
 
   created  DateTime  @default(now())
   updated  DateTime  @updatedAt
@@ -29,7 +28,6 @@ model MetaInfo {
   mid         String   @id @default(cuid())
   title       String
   description String
-  movieId     String
   poster      Poster[]
   created     DateTime @default(now())
   updated     DateTime @updatedAt
@@ -57,7 +55,7 @@ model Tag {
 model Poster {
   pid        String    @id @default(cuid())
   imgUrl     String
-  MetaInfo   MetaInfo? @relation(fields: [metaInfoId], references: [mid])
+  metaInfo   MetaInfo? @relation(fields: [metaInfoId], references: [mid])
   metaInfoId String?
 }
 
@@ -78,14 +76,14 @@ model Profile {
   lovedMovies Movie[]
   lovedGenres Genre[]
   usrTheme    Theme    @relation(fields: [themeId], references: [thid])
-  themeId     BigInt
+  themeId     String
   created     DateTime @default(now())
   updated     DateTime @updatedAt
   User        User?
 }
 
 model Theme {
-  thid       BigInt    @id @default(autoincrement())
+  thid       String    @id @default(cuid())
   themeName  String    @unique
   themeColor String
   created    DateTime  @default(now())

@@ -1,4 +1,4 @@
-import { prisma } from '../../lib/prisma'
+import { prisma } from '../../../lib/prisma'
 export default async (req, res) => {
     if (req.method !== 'GET') {
         return res.status(400)
@@ -18,8 +18,13 @@ export default async (req, res) => {
                     })
     } catch (e) {
         prisma.$disconnect()
+        return res.status(500)
+        .send({
+            code: 500,
+            describe: e,
+            data: {}
+        })
     } finally {
         prisma.$disconnect()
-        // process.exit(1)
     }
 }

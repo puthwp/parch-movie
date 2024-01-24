@@ -1,152 +1,228 @@
 import { faker } from "@faker-js/faker";
-import { prisma } from "../src/db/prisma";
+import { prisma } from "../lib/prisma";
+import { profile } from "node:console";
 
-const userData = [
-  {
-    name: "Alice",
-    email: "alice@prisma.io",
-    posts: {
-      create: [
-        {
-          title: "Join the Prisma Slack",
-          content: "https://slack.prisma.io",
-          published: true,
-        },
-      ],
-    },
-  },
-  {
-    name: "Nilu",
-    email: "nilu@prisma.io",
-    posts: {
-      create: [
-        {
-          title: "Follow Prisma on Twitter",
-          content: "https://www.twitter.com/prisma",
-          published: true,
-          viewCount: 42,
-        },
-      ],
-    },
-  },
-  {
-    name: "Mahmoud",
-    email: "mahmoud@prisma.io",
-    posts: {
-      create: [
-        {
-          title: "Ask a question about Prisma on GitHub",
-          content: "https://www.github.com/prisma/prisma/discussions",
-          published: true,
-          viewCount: 128,
-        },
-        {
-          title: "Prisma on YouTube",
-          content: "https://pris.ly/youtube",
-        },
-      ],
-    },
-  },
-];
+const baseGenres = Array(
+  "Action",
+  "Animation",
+  "Comedy",
+  "Crime",
+  "Drama",
+  "Fantasy",
+  "Historical",
+  "Horror",
+  "Romance",
+  "Science Fiction",
+  "Thriller",
+  "Western",
+  "Other"
+);
 
 async function createGenres() {
-  const genrePromises = Array(15)
-    .fill(null)
-    .map(() => {
-      const g = faker.music.genre();
-      return prisma.category.upsert({
-        where: {
-          name: g,
-        },
-        update: {},
-        create: {
-          name: g,
-          info: faker.lorem.lines({ min: 2, max: 4 }),
-        },
-      });
+  const genrePromises = baseGenres.map((g) => {
+    const gl = g.toLowerCase();
+    return prisma.genre.upsert({
+      where: {
+        name: gl,
+      },
+      update: {
+        info: faker.lorem.lines({ min: 2, max: 4 }),
+      },
+      create: {
+        name: gl,
+        info: faker.lorem.lines({ min: 2, max: 4 }),
+      },
     });
+  });
   return prisma.$transaction(genrePromises);
 }
 
-async function getAllGenre() {
-  return await prisma.category.findMany();
+async function createThemes() {
+  return await prisma.theme.upsert({
+    where: {
+      themeName: "default",
+    },
+    update: {
+      themeName: "default",
+      themeColor: faker.color.rgb(),
+    },
+    create: {
+      themeName: "default",
+      themeColor: faker.color.rgb(),
+    },
+  });
 }
 
-async function randomGenre() {
-    return await prisma.$transaction(getAllGenre[(Math.floor(Math.random() * getAllGenre.length))])
+async function getDefaultTheme() {
+  return await prisma.theme.findFirst({
+    where: {
+      themeName: "default",
+    },
+  });
 }
 
-async function randomTags() {
+async function getRandomTags() {
   const mockTags = faker.word
     .words({ count: { min: 0, max: 10 } })
     .toLowerCase()
     .split(" ");
   const tags = mockTags.map((tag) => {
-    return prisma.tag.create({
-      data: {
+    return prisma.tag.upsert({
+      where: {
+        name: tag,
+      },
+      update: {
+        name: tag,
+      },
+      create: {
         name: tag,
       },
     });
   });
-  return tags//prisma.$transaction(tags);
-}
-
-async function createMovies() {
-  const moviesPromises = Array(50)
-    .fill(null)
-    .map(() => {
-      // const tags = await randomTags();
-      const released = faker.date.recent({
-        refDate: "2000-01-01T00:00:00.000Z",
-      });
-      const tags = randomTags()
-      return prisma.movie.upsert({
-        where: {},
-        update: {},
-        create: {
-          title: faker.lorem.sentence({ min: 1, max: 12 }),
-          description: faker.lorem.lines({ min: 2, max: 6 }),
-          length: faker.number.int({ min: 90, max: 240 }),
-          released: released,
-          available: faker.date.soon({ refDate: released }),
-          // tags: {
-          //     connect: tags
-          // },
-          // genre: randomGenre(),
-        },
-      });
-    });
-  // const tagPromises = Array(20).fill(null).map(() => {
-  //     return prisma.tag.create({
-  //         data: {
-  //             name: faker.music.genre(),
-  //             movies: {
-  //                 connect: {
-  //                     id: movieId
-  //                 },
-  //             },
-  //         },
-  //     });
-  // });
-  // const tags =await prisma.$transaction(tagPromises);
-  return prisma.$transaction(moviesPromises);
+  return mockTags;
 }
 
 async function main() {
   console.log(`Start seeding ...`);
-  // for (const u of userData) {
-  //   const user = await prisma.user.create({
-  //     data: u,
-  //   })
-  //   console.log(`Created user with id: ${user.id}`)
-  // }
+
+  //Seeding Genre
   const genre = await createGenres();
   console.log("Genre generated...");
   console.log({ genre });
+  console.log("-".repeat(10));
 
-  // const movies = await createMovies();
-  // console.log("Movies generated...");
-  // console.log({ movies });
+  //Seeding Theme
+  const theme = await createThemes();
+  console.log("Default theme generated...");
+  console.log({ theme });
+  console.log("-".repeat(10));
+
+  // Seeding Users
+  console.log("Start seeding Users");
+  const numberOfUsers = Math.floor(Math.random() * 10);
+  const usersWithGenresPromises = await Array(numberOfUsers)
+    .fill(null)
+    .map((_, i) => {
+      const genfirstname = faker.person.firstName();
+      const genlastname = faker.person.lastName();
+      const genemail = faker.internet
+        .email({
+          firstName: genfirstname,
+          lastName: genlastname,
+          provider: "gmail.com",
+        })
+        .toLowerCase();
+      const genphone = faker.helpers.fromRegExp("0[689][0-9]{8}");
+      return prisma.user.upsert({
+        where: {
+          email: genemail,
+        },
+        update: {},
+        create: {
+          email: genemail,
+          profile: {
+            connectOrCreate: {
+              where: {
+                pid: "0",
+              },
+              create: {
+                firstname: genfirstname,
+                lastname: genlastname,
+                phone: genphone,
+                usrTheme: {
+                  connectOrCreate: {
+                    where: {
+                      themeName: "default",
+                    },
+                    create: {
+                      themeName: "default",
+                      themeColor: faker.color.rgb(),
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        include: {
+          profile: true,
+        },
+      });
+    });
+  const usersWithGenre = await prisma.$transaction(usersWithGenresPromises);
+  console.log("Generated " + numberOfUsers + " Users");
+  console.log({ usersWithGenre });
+  console.log("-".repeat(10));
+
+  //Seeding Movies
+  console.log('Start seeding "Movies"');
+
+  const moviePromises = await Array(15)
+    .fill(null)
+    .map(() => {
+      const movieName = faker.lorem.sentence({ min: 1, max: 8 });
+      const releasedDate = faker.date.recent({
+        refDate: "2000-01-01T00:00:00.000Z",
+      });
+      return prisma.movie.upsert({
+        where: {
+          movieId: '0'
+        },
+        update: {},
+        create: {
+          title: movieName,
+          description: faker.lorem.lines({ min: 2, max: 4 }),
+          released: releasedDate,
+          available: faker.date.soon({ refDate: releasedDate }),
+          length: faker.number.int({ min: 90, max: 240 }),
+          info: {
+            connectOrCreate: {
+              where: {
+                mid: '0'
+              },
+              create: {
+                title: movieName,
+                description: faker.lorem.lines({ min: 1, max: 2 }),
+                poster: {
+                  connectOrCreate: {
+                    where: {
+                      pid: '0'
+                    },
+                    create: {
+                      imgUrl: faker.image.urlLoremFlickr({ category: "movie" }),
+                    },
+                  },
+                },
+              },
+            },
+          },
+          genres: {
+            connectOrCreate: {
+              where: {
+                name: "action",
+              },
+              create: {
+                name: "action",
+                info: faker.lorem.sentence()
+              },
+            },
+          },
+          tags: {
+            connectOrCreate: {
+              where: {
+                name: "life",
+              },
+              create: {
+                name: "life",
+              },
+            },
+          },
+        },
+      });
+    });
+  const movies = await prisma.$transaction(moviePromises);
+  console.log("15 Movies generated...");
+  console.log({ movies });
 
   console.log(`Seeding finished.`);
 }

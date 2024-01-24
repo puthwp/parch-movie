@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "./generated/sqlite"
 }
 
 datasource db {
@@ -9,47 +8,44 @@ datasource db {
 }
 
 model Movie {
-  movieId     String  @id @default(cuid())
+  movieId     String    @id @default(cuid())
   title       String
-  description String?
-  genre       Genre[]
+  description String
+  genres      Genre[]
   tags        Tag[]
+  info        MetaInfo? @relation(fields: [infoId], references: [mid])
+  infoId      String?   @unique
+  length      Int?
+  released    DateTime?
+  available   DateTime?
 
-  length    Int?
-  released  DateTime?
-  available DateTime?
-  info      MetaInfo  @relation(fields: [infoId], references: [id])
-  infoId    String    @unique
-
-  created   DateTime @default(now())
-  updated   DateTime @updatedAt
-  Profile   Profile? @relation(fields: [profileId], references: [id])
-  profileId String?
+  created  DateTime  @default(now())
+  updated  DateTime  @updatedAt
+  profiles Profile[]
 }
 
 model MetaInfo {
-  id          String   @id @default(cuid())
+  mid         String   @id @default(cuid())
   title       String
   description String
-  movieId     String
   poster      Poster[]
   created     DateTime @default(now())
   updated     DateTime @updatedAt
-  Movie       Movie?
+  movie       Movie?
 }
 
 model Genre {
-  id      String    @id @default(cuid())
-  name    String    @unique
-  info    String
-  created DateTime  @default(now())
-  updated DateTime  @updatedAt
-  movies  Movie[]
-  profile Profile[]
+  gid      String    @id @default(cuid())
+  name     String    @unique
+  info     String
+  created  DateTime  @default(now())
+  updated  DateTime  @updatedAt
+  movies   Movie[]
+  profiles Profile[]
 }
 
 model Tag {
-  id      String   @id @default(cuid())
+  tid     String   @id @default(cuid())
   name    String   @unique
   created DateTime @default(now())
   updated DateTime @updatedAt
@@ -57,36 +53,40 @@ model Tag {
 }
 
 model Poster {
-  id         String    @id @default(cuid())
+  pid        String    @id @default(cuid())
   imgUrl     String
-  MetaInfo   MetaInfo? @relation(fields: [metaInfoId], references: [id])
+  metaInfo   MetaInfo? @relation(fields: [metaInfoId], references: [mid])
   metaInfoId String?
 }
 
 model User {
-  id          String   @id @default(uuid())
-  userEmail   String   @unique
-  phoneNumber String   @unique
-  profileID   String
-  created     DateTime @default(now())
-  updated     DateTime @updatedAt
+  uid       String   @id @default(uuid())
+  email     String   @unique
+  created   DateTime @default(now())
+  updated   DateTime @updatedAt
+  profile   Profile? @relation(fields: [profileId], references: [pid])
+  profileId String?  @unique
 }
 
 model Profile {
-  id              String   @id @default(cuid())
-  lovedMovies     Movie[]
-  lovedCategories Genre[]
-  usrTheme        Theme    @relation(fields: [themeId], references: [id])
-  created         DateTime @default(now())
-  updated         DateTime @updatedAt
-  themeId         BigInt
+  pid         String   @id @default(cuid())
+  phone       String
+  firstname   String
+  lastname    String
+  lovedMovies Movie[]
+  lovedGenres Genre[]
+  usrTheme    Theme    @relation(fields: [themeId], references: [thid])
+  themeId     String
+  created     DateTime @default(now())
+  updated     DateTime @updatedAt
+  user        User?
 }
 
 model Theme {
-  id         BigInt    @id @default(autoincrement())
+  thid       String    @id @default(cuid())
   themeName  String    @unique
   themeColor String
   created    DateTime  @default(now())
   updated    DateTime  @updatedAt
-  UserPref   Profile[]
+  profiles   Profile[]
 }

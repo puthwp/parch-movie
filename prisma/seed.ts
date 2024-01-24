@@ -152,11 +152,7 @@ async function main() {
         lastName: genlastname,
         provider: "gmail.com",
       }).toLowerCase();
-      const genphone = faker.helpers.fromRegExp("0[6,8,9][d]{8}");
-      // const randGenres = _.sample(
-      //   baseGenres,
-      //   Math.floor(Math.random() * baseGenres.length)
-      // );
+      const genphone = faker.helpers.fromRegExp("0[689][0-9]{8}");
       return prisma.user.upsert({
         where: {
           email: genemail,

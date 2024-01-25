@@ -8,3 +8,10 @@ export const prisma =  globalPrisma.prisma ||
     })
 
 if (process.env.NODE_ENV !== 'production') globalPrisma.prisma
+
+export function exclude(obj,...key) {
+    for (let key of obj) {
+        delete obj[key]
+    }
+    return obj
+}

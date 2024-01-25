@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 import { prisma } from '../../../lib/prisma'
 import Error from 'next/error'
 
@@ -6,12 +7,26 @@ async function fetchMoviesWithTag(tag) {
         where: {
             name: tag
         },
-        include: {
+        select: {
+            updated: true,
+            created: true,
             movies: {
-                include: {
+                select: {
+                    movieId: true,
+                    title: true,
+                    description: true,
+                    genres: {
+                        select: {
+                            name: true
+                        }
+                    },
                     info: {
-                        include:{
-                            poster: true
+                        select:{
+                            poster: {
+                                select: {
+                                    imgUrl: true
+                                }
+                            }
                         }
                     }
                 }
@@ -35,7 +50,7 @@ export default async (req, res) => {
         return res.status(200).json({
             code: 200,
             description: "ok",
-            data: fetchMovies
+            data: fetchMovies.map
         })
     } catch (e) {
         prisma.$disconnect()
